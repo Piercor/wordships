@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "concurrently -n backend,vite npm:backend npm:dev",
+    "start": "concurrently -n backend,vite -c magenta,green npm:backend npm:dev",
     "dev": "vite",
     "backend": "dotnet run --project backend/Server",
     "build": "tsc -b && vite build",
