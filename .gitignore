@@ -508,3 +508,6 @@ dist-ssr
 
 bin
 obj
+.features-gen
+playwright-report
+test-results
