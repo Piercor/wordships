@@ -8,8 +8,8 @@ interface Square {
 }
 
 function createEmptyGrid(): Square[][] {
-  return Array.from({ length: 10 }, () =>  // skapa 10 rader
-    Array.from({ length: 10 }, () => ({    // skapa 10 celler per rad
+  return Array.from({ length: 10 }, () =>
+    Array.from({ length: 10 }, () => ({
       letter: null,
       revealed: false,
       hasWord: false,
