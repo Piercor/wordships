@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "../sass/Grid.scss";
 
 interface Square {
   letter: string | null;
@@ -20,8 +21,16 @@ export default function Grid() {
   const [grid] = useState<Square[][]>(createEmptyGrid);
 
   return (
-    <div>
-      Grid
+    <div className="grid-container">
+      {grid.map((row, rowIndex) =>
+        row.map((cell, colIndex) => (
+          <div
+            className="grid-cell"
+            key={`${rowIndex}-${colIndex}`}
+          >
+          </div>
+        ))
+      )}
     </div>
   );
 }
