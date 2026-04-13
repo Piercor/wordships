@@ -2,5 +2,5 @@ namespace Server;
 
 public static class GameEngine
 {
-  public static Dictionary<string, Game> Games { get; } = new();
+  public static Dictionary<Guid, Game> Games { get; } = new();
 }
