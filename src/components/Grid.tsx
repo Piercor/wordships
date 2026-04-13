@@ -1,3 +1,4 @@
+import { useState } from "react";
 
 interface Square {
   letter: string | null;
@@ -16,6 +17,8 @@ function createEmptyGrid(): Square[][] {
 }
 
 export default function Grid() {
+  const [grid] = useState<Square[][]>(createEmptyGrid);
+
   return (
     <div>
       Grid
