@@ -75,7 +75,6 @@ public class Game
           }
           break;
         case 6:
-          for (int i = 0; i < 1; i++)
           {
             int index = rnd.Next(0, wordList.Count);
             randomWords.Add(new(wordList[index]));
@@ -83,6 +82,7 @@ public class Game
           break;
       }
     }
+    randomWords.Reverse();
     return randomWords;
   }
   public static Player CreatePlayer(string Name)
