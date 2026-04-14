@@ -14,15 +14,20 @@ public class Game
   {
     return Id;
   }
-  public Player? GetPlayer(int PlayerNumber)
+  public Player? GetPlayer(Guid playerId)
   {
-    switch (PlayerNumber)
+    if (Player1?.Id == playerId)
     {
-      case 1: return Player1;
-      case 2: return Player2;
-      default: return null;
+      return Player1;
     }
-
+    else if (Player2?.Id == playerId)
+    {
+      return Player2;
+    }
+    else
+    {
+      return null;
+    }
   }
   public static List<Word> GetWords()
   {
@@ -83,8 +88,8 @@ public class Game
     randomWords.Reverse();
     return randomWords;
   }
-  public static Player CreatePlayer(string Name)
+  public static Player CreatePlayer(string name)
   {
-    return new(Guid.NewGuid(), Name, GetWords());
+    return new(Guid.NewGuid(), name, GetWords());
   }
 }
