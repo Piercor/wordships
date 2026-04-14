@@ -1,9 +1,12 @@
 namespace Server;
 
-public record Word(string Name)
+public class Word
 {
-  public List<char> LetterList => Name.ToList();
-  /*   public List<Letter> LetterList => Name
-    .Select(c => new Letter { Value = c })
-    .ToList(); */
+  public string Name;
+  public List<Letter> LetterList { get; }
+  public Word(string name)
+  {
+    Name = name;
+    LetterList = name.Select(c => new Letter { Value = c }).ToList();
+  }
 }
