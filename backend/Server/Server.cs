@@ -5,5 +5,6 @@ var app = builder.Build();
 
 
 app.GameEndpoints();
+app.PlayerEndpoints();
 
 app.Run();
