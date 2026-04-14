@@ -1,5 +1,4 @@
 import { useState } from "react";
-import "../sass/Grid.scss";
 
 interface Square {
   letter: string | null;
