@@ -20,16 +20,23 @@ public static class GameEngine
     return null;
   }
 
-  /* public static bool PlayerHasLetter(Guid gameId, Guid playerId, char letter)
+  public static string PlayerHasLetter(Guid gameId, Guid playerId, char xChar)
   {
-    var player = GameEngine.GetPlayer(playerId);
+    bool found = false;
+    Player? player = Games[gameId].GetPlayer(playerId);
 
-    foreach (Word word in player.WordList)
+    foreach (Word word in player!.WordList)
     {
-      if (word.LetterList.Contains(letter))
+      foreach (Letter letter in word.LetterList)
       {
-        
+        if (letter.Value == xChar)
+        {
+          letter.Found = true;
+          found = true;
+        }
       }
     }
-  } */
+    if (found) { return "Hit"; }
+    else { return "Miss"; }
+  }
 }
