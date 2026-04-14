@@ -24,16 +24,16 @@ public class PlayerTests
   }
 
   [Theory]
-  [InlineData(0, 3)]
-  [InlineData(1, 3)]
-  [InlineData(2, 3)]
-  [InlineData(3, 3)]
+  [InlineData(0, 6)]
+  [InlineData(1, 5)]
+  [InlineData(2, 5)]
+  [InlineData(3, 4)]
   [InlineData(4, 4)]
   [InlineData(5, 4)]
-  [InlineData(6, 4)]
-  [InlineData(7, 5)]
-  [InlineData(8, 5)]
-  [InlineData(9, 6)]
+  [InlineData(6, 3)]
+  [InlineData(7, 3)]
+  [InlineData(8, 3)]
+  [InlineData(9, 3)]
   public void PlayerWordListLength_Test(int index, int expected)
   {
     Assert.Equal(_player.WordList[index].LetterList.Count, expected);
