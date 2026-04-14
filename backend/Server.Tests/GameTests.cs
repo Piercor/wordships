@@ -15,8 +15,8 @@ public class GameTests
   {
     _game.Player1 = Game.CreatePlayer("Player1");
     _game.Player2 = Game.CreatePlayer("Player2");
-    Assert.Equal(_game.GetPlayer(1), _game.Player1);
-    Assert.Equal(_game.GetPlayer(2), _game.Player2);
+    Assert.Equal(_game.GetPlayer(_game.Player1.Id), _game.Player1);
+    Assert.Equal(_game.GetPlayer(_game.Player2.Id), _game.Player2);
   }
 
   [Fact]
