@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent } from "react";
+import { useState } from "react";
 import { useGame } from "../context/GameContext";
 
 const RegisterPlayerPage = () => {
@@ -6,7 +6,7 @@ const RegisterPlayerPage = () => {
   const [playerName, setPlayerName] = useState("");
   const [error, setError] = useState("");
 
-  const handleRegister = (e: ChangeEvent) => {
+  const handleRegister = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!playerName.trim()) {
