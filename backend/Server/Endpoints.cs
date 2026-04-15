@@ -90,7 +90,6 @@ public static class Endpoints
       var response = GameEngine.PlayerHasLetter(Guid.Parse(body.gameId), Guid.Parse(body.playerId), char.Parse(body.letter));
 
       return Results.Ok(response);
-
     });
   }
 }
