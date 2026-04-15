@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import type { Player } from "../interface/User";
+import type { Player } from "../interface/Player";
 import type { Game } from "../interface/Game";
 
 interface GameContextInterface {
@@ -7,7 +7,7 @@ interface GameContextInterface {
   gameId: string | null;
   registerPlayer: (name: string) => void;
   createGame: () => Promise<Game | null>;
-  joinGame: (gameId: string) => Promise<boolean>;
+  joinGame: (gameId: string) => Promise<Game | null>;
   error: string | null;
   loading: boolean;
   setGameId: (id: string) => void;
@@ -18,7 +18,7 @@ const GameContext = createContext<GameContextInterface | null>(null);
 export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const [player, setPlayer] = useState<Player | null>(null);
   const [gameId, setGameId] = useState<string | null>(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -64,18 +64,30 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   }, [gameId]);
 
   const registerPlayer = (name: string) => {
-    setPlayer({ id: crypto.randomUUID(), name });
+    setPlayer({ id: "", name });
   };
 
-  const createGame = async () => {
+  const createGame = async (): Promise<Game | null> => {
     if (!player) {
       setError("Player not registered");
       return null;
     }
     setLoading(true);
     setError("");
+
     try {
-      return { gameId: crypto.randomUUID() };
+      const result = await fetch("/api/game/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ playerName: player.name }),
+      });
+
+      if (!result.ok) throw new Error("Failed to create game");
+      const data = await result.json();
+
+      setPlayer({ id: data.player.id, name: data.player.name });
+
+      return data;
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Unknown error");
       return null;
@@ -84,21 +96,33 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const joinGame = async (id: string) => {
+  const joinGame = async (id: string): Promise<Game | null> => {
     if (!player) {
       setError("Player not registered");
-      return false;
+      return null;
     }
 
     setLoading(true);
     setError("");
 
     try {
-      setGameId(id);
-      return true;
+      const result = await fetch("/api/game/join", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ gameId: id, playerName: player.name }),
+      });
+
+      if (!result.ok) {
+        const errorData = await result.json();
+        throw new Error(errorData.error || "Failed to join game");
+      }
+
+      const data = await result.json();
+      setPlayer({ id: data.player.id, name: data.player.name });
+      return data;
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Unknown error");
-      return false;
+      return null;
     } finally {
       setLoading(false);
     }
