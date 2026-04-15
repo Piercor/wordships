@@ -1,18 +1,18 @@
-import { useState, type ChangeEvent } from "react";
+import { useState } from "react";
 import { useGame } from "../context/GameContext";
 
 const JoinGamePage = () => {
-  const { player, joinGame, error, loading } = useGame();
-  const [gameId, setGameId] = useState("");
+  const { player, joinGame, error, loading, setGameId } = useGame();
+  const [inputGameId, setInputGameId] = useState("");
   const [joined, setJoined] = useState(false);
 
-  const handleJoinGame = async (e: ChangeEvent) => {
+  const handleJoinGame = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!gameId.trim()) {
+    if (!inputGameId.trim()) {
       return;
     }
 
-    const result = await joinGame(gameId);
+    const result = await joinGame(inputGameId);
     if (result) {
       setJoined(true);
     }
@@ -37,7 +37,7 @@ const JoinGamePage = () => {
           the game.
         </p>
 
-        <button onClick={() => window.location.reload()}>Enter Game</button>
+        <button onClick={() => setGameId(inputGameId)}>Enter Game</button>
       </div>
     );
   }
@@ -55,8 +55,8 @@ const JoinGamePage = () => {
             data-testid="join-game-id-input"
             id="gameId"
             type="text"
-            value={gameId}
-            onChange={(e) => setGameId(e.target.value)}
+            value={inputGameId}
+            onChange={(e) => setInputGameId(e.target.value)}
             placeholder="Paste the Game ID from your opponent"
             autoFocus
           />
@@ -65,7 +65,7 @@ const JoinGamePage = () => {
         <button
           data-testid="join-game-btn"
           type="submit"
-          disabled={!gameId.trim()}
+          disabled={!inputGameId.trim()}
         >
           {loading ? "Joining..." : "Join Game"}
         </button>
