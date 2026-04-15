@@ -38,7 +38,15 @@ public static class Endpoints
       game.Player1 = Game.CreatePlayer(body.playerName);
       GameEngine.Games.Add(game.Id, game);
 
-      return Results.Ok(new { GameId = game.Id });
+      return Results.Ok(new
+      {
+        gameId = game.Id,
+        player = new
+        {
+          id = game.Player1.Id,
+          name = game.Player1.Name
+        }
+      });
     });
 
     // Takes a gameId and a playerName and creates a second player to join the game. Returns GameInfo with players names.
@@ -49,7 +57,15 @@ public static class Endpoints
 
       var game = GameEngine.Games[Guid.Parse(body.gameId)];
 
-      return Results.Ok(new { GameInfo = $"GameId: {game.Id}, Player 1 Name: {game.Player1.Name}, Player 2 Name: {game.Player2.Name}" });
+      return Results.Ok(new
+      {
+        gameId = game.Id,
+        player = new
+        {
+          id = game.Player2.Id,
+          name = game.Player2.Name
+        }
+      });
     });
   }
 
