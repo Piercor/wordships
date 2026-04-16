@@ -13,13 +13,13 @@ Feature: Create or Join Game
 
   Scenario: Successfully join a game
     When I click "Already have a Game ID? Join instead"
-    And I enter the Game ID "successfull-gameid-123"
+    And I enter the Game ID
     And I click Join Game successfully
     Then I should see a confirmation that I joined a game
 
   Scenario: Show error when entering invalid Game ID
     When I click "Already have a Game ID? Join instead"
-    And I enter the Game ID "invalid-gameId-123"
+    And I enter the Game ID
     And I click Join Game with invalid ID
     Then I should see the error message "Failed to join game"
 

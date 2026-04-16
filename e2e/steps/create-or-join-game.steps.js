@@ -24,6 +24,7 @@ When("I click Create Game", async ({ page }) => {
 
 Then("I should see a Game ID to share with my opponent", async ({ page }) => {
   await expect(page.locator(".code")).toBeVisible();
+    await expect(page.locator(".code")).toHaveText("successfull-gameId-123");
 });
 
 When("I click {string}", async ({ page}, text) => {
@@ -34,29 +35,27 @@ Then("I should see the join game form", async ({page }) => {
   await expect(page.getByTestId("join-page")).toBeVisible();
 });
 
-When("I enter the Game ID {string}",  async({page}, gameId) => {
-  await page.getByTestId("join-game-id-input").fill(gameId);
-})
+When("I enter the Game ID", async ({ page }) => {
+  await page.getByTestId("join-game-id-input").fill("fake-gameId");
+});
 
-When("I click Join Game successfully", async ({ page }) => {
+  When("I click Join Game successfully", async ({ page }) => {
   await page.route("*/**/api/game/join", async (route) => {
     await route.fulfill({
       json: {
-        gameId: "test-game-123",
-        player: { id: "123", name: "Anna" }  
+        player: { id: "123", name: "Anna" }
       }
     });
   });
-    await page.getByTestId("join-game-btn").click();
+  await page.getByTestId("join-game-btn").click();
   });
 
   When("I click Join Game with invalid ID", async ({ page }) => {
     await page.route("*/**/api/game/join", async (route) => {
       await route.fulfill({
-        status: 400,
-        contentType: "application/json",
-        body: JSON.stringify({ error: "Failed to join game" })
-      });
+      status: 400,
+      json: {error: "Failed to join game"}
+    })
     });
     await page.getByTestId("join-game-btn").click();
   });
