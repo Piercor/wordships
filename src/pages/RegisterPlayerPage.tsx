@@ -22,11 +22,13 @@ const RegisterPlayerPage = () => {
     <main data-testid="register-page">
       <div className="card">
         <div className="register-header">
-          <img
-            src="https://8upload.com/image/ff8d99e3244799c9/Wordships-grey.png"
-            alt="Wordship"
-            className="logo"
-          />
+          <h1>
+            <img
+              src="https://8upload.com/image/ff8d99e3244799c9/Wordships-grey.png"
+              alt="Wordship"
+              className="logo"
+            />
+          </h1>
         </div>
         <h2>Register Player</h2>
 
@@ -43,7 +45,6 @@ const RegisterPlayerPage = () => {
               onChange={(e) => setPlayerName(e.target.value)}
               placeholder="Enter your player name"
               autoFocus
-              required
             />
           </div>
 
