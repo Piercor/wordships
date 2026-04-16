@@ -5,7 +5,7 @@ public class Game
   public Guid Id;
   public Player? Player1;
   public Player? Player2;
-
+  public Player? Turn;
   public Game(Guid id)
   {
     Id = id;
@@ -91,5 +91,11 @@ public class Game
   public static Player CreatePlayer(string name)
   {
     return new(Guid.NewGuid(), name, GetWords());
+  }
+
+  public Player? FirstTurn()
+  {
+    Random rnd = new Random();
+    return rnd.Next(2) == 0 ? Player1 : Player2;
   }
 }
