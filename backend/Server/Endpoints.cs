@@ -8,7 +8,7 @@ public static class Endpoints
   public static void GameEndpoints(this WebApplication App)
   {
     // Gets players id & name, with the game id as part of the API call.
-    App.MapGet("/api/game/{id}", (HttpContext context, Guid id) =>
+    App.MapGet("/api/game/{id:guid}", (HttpContext context, Guid id) =>
     {
       var game = GameEngine.Games[id];
 
@@ -69,6 +69,14 @@ public static class Endpoints
 
       return Results.Ok(response);
     });
+
+    // Checks if both players have placed their words and are ready to start the game.
+    App.MapGet("/api/game/{id:guid}/ready", (HttpContext context, Guid id) =>
+  {
+    var game = GameEngine.Games[id];
+    return Results.Ok(new { bothReady = game.BothReady });
+
+  });
   }
 
   public static void PlayerEndpoints(this WebApplication App)
@@ -90,7 +98,9 @@ public static class Endpoints
             letters = word.LetterList.Select(letter => new
             {
               value = letter.Value,
-              found = letter.Found
+              found = letter.Found,
+              row = letter.Row,
+              col = letter.Col
             })
           })
         }
@@ -109,5 +119,37 @@ public static class Endpoints
 
       return Results.Ok(response);
     });
+
+
+    App.MapPost("/api/player/place", (HttpContext context, JsonElement bodyJson) =>
+  {
+    var body = JSON.Parse(bodyJson.ToString());
+    Guid playerId = Guid.Parse(body.playerId);
+
+    Player? player = GameEngine.GetPlayer(playerId);
+    if (player == null) return Results.NotFound();
+
+    foreach (var placement in body.placements)
+    {
+      string wordName = placement.wordName;
+      int row = (int)placement.row;
+      int col = (int)placement.col;
+
+      foreach (Word word in player.WordList)
+      {
+        if (word.Name == wordName)
+        {
+          for (int i = 0; i < word.LetterList.Count; i++)
+          {
+            word.LetterList[i].Row = row;
+            word.LetterList[i].Col = col + i;
+          }
+        }
+      }
+    }
+
+    player.IsReady = true;
+    return Results.Ok(new { ready = player.IsReady });
+  });
   }
 }

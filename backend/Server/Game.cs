@@ -5,6 +5,7 @@ public class Game
   public Guid Id;
   public Player? Player1;
   public Player? Player2;
+  public bool BothReady => Player1?.IsReady == true && Player2?.IsReady == true;
 
   public Game(Guid id)
   {
@@ -61,6 +62,7 @@ public class Game
           {
             int index = rnd.Next(0, wordList.Count);
             randomWords.Add(new(wordList[index]));
+            wordList.RemoveAt(index);
           }
           break;
         case 4:

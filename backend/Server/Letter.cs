@@ -4,4 +4,7 @@ public class Letter
 {
   public char Value { get; set; }
   public bool Found { get; set; } = false;
+  public int Row { get; set; }
+  public int Col { get; set; }
+
 }
