@@ -1,19 +1,26 @@
-import { useState, useEffect } from 'react';
+import RegisterPlayerPage from "./pages/RegisterPlayerPage";
+import { GameProvider, useGame } from "./context/GameContext";
+import CreateOrJoinPage from "./pages/CreateOrJoinPage";
+
+const AppContent = () => {
+  const { player, gameId } = useGame();
+
+  if (!player) {
+    return <RegisterPlayerPage />;
+  }
+
+  if (!gameId) {
+    return <CreateOrJoinPage />;
+  }
+
+  //TODO: ska returnera sidan för själva spelet sen
+  return <div>Väntar på motspelare... (Game ID: {gameId})</div>;
+};
 
 export default function App() {
-
-  const [message, setMessage] = useState('');
-
-  useEffect(() => {
-    (async () => {
-      const response = await fetch('api/hello');
-      const data = await response.json();
-      setMessage((data as any).message);
-    })();
-  }, []);
-
-  return <>
-    <h1>A message from our backend</h1>
-    <p>{message}</p>
-  </>;
+  return (
+    <GameProvider>
+      <AppContent />
+    </GameProvider>
+  );
 }
