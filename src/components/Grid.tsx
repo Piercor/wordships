@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Square } from "../interfaces/Grid";
+import type { Square, GridProps } from "../interface/Grid";
 
 
 function createEmptyGrid(): Square[][] {
@@ -12,11 +12,11 @@ function createEmptyGrid(): Square[][] {
   );
 }
 
-export default function Grid() {
+export default function Grid({ opponent }: GridProps) {
   const [grid] = useState<Square[][]>(createEmptyGrid);
 
   return (
-    <div className="grid-container">
+    <div className={`grid-container ${opponent ? "grid-opponent" : "grid-own"}`}>
       {grid.map((row, rowIndex) =>
         row.map((cell, colIndex) => (
           <div

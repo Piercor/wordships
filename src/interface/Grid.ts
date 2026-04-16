@@ -3,3 +3,6 @@ export interface Square {
   revealed: boolean;
   hasWord: boolean;
 }
+export interface GridProps {
+  opponent: boolean;
+}
