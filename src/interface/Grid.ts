@@ -5,4 +5,5 @@ export interface Square {
 }
 export interface GridProps {
   opponent: boolean;
+  grid: Square[][];
 }
