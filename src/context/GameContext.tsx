@@ -1,9 +1,12 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type { Player } from "../interface/Player";
 import type { Game } from "../interface/Game";
+import type { Word } from "../interface/Word";
+import type { Placement } from "../interface/Placement";
 
 interface GameContextInterface {
   player: Player | null;
+  opponent: Player | null;
   gameId: string | null;
   registerPlayer: (name: string) => void;
   createGame: () => Promise<Game | null>;
@@ -11,15 +14,23 @@ interface GameContextInterface {
   error: string | null;
   loading: boolean;
   setGameId: (id: string) => void;
+  playerWords: Word[];
+  isReady: boolean;
+  bothReady: boolean;
+  setReady: (placements: Placement[]) => Promise<void>;
 }
 
 const GameContext = createContext<GameContextInterface | null>(null);
 
 export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const [player, setPlayer] = useState<Player | null>(null);
+  const [opponent, setOpponent] = useState<Player | null>(null);
   const [gameId, setGameId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [playerWords, setPlayerWords] = useState<Word[]>([]);
+  const [isReady, setIsReady] = useState(false);
+  const [bothReady, setBothReady] = useState(false);
 
   useEffect(() => {
     const saved =
@@ -63,6 +74,40 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [gameId]);
 
+  useEffect(() => {
+    if (!gameId || !player?.id || !isReady || bothReady) return;
+
+    const checkReady = async () => {
+      const result = await fetch(`/api/game/${gameId}/ready`);
+      const data = await result.json();
+      if (data.bothReady) setBothReady(true);
+    };
+
+    const interval = setInterval(checkReady, 3000);
+    return () => clearInterval(interval);
+  }, [gameId, player?.id, isReady, bothReady]);
+
+  const setReady = async (placements: Placement[]) => {
+    if (!player?.id || !gameId) return;
+
+    const result = await fetch("/api/player/place", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        playerId: player.id,
+        gameId,
+        placements,
+      }),
+    });
+    if (!result.ok) {
+      const errorData = await result.json();
+      setError(errorData.error || "Failed to place words");
+      return;
+    }
+
+    setIsReady(true);
+  };
+
   const registerPlayer = (name: string) => {
     setPlayer({ id: "", name });
   };
@@ -73,7 +118,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
       return null;
     }
     setLoading(true);
-    setError("");
+    setError(null);
 
     try {
       const result = await fetch("/api/game/create", {
@@ -103,7 +148,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     setLoading(true);
-    setError("");
+    setError(null);
 
     try {
       const result = await fetch("/api/game/join", {
@@ -119,6 +164,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
 
       const data = await result.json();
       setPlayer({ id: data.player.id, name: data.player.name });
+
       return data;
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Unknown error");
@@ -128,10 +174,39 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  useEffect(() => {
+    if (!player?.id) return;
+
+    const fetchWords = async () => {
+      const playerResult = await fetch(`/api/player/${player.id}`);
+      const playerData = await playerResult.json();
+      setPlayerWords(playerData.player.wordList);
+    };
+
+    fetchWords();
+  }, [player?.id]);
+
+  useEffect(() => {
+    if (!gameId || !player?.id || opponent) return;
+
+    const fetchOpponent = async () => {
+      const result = await fetch(`/api/game/${gameId}`);
+      const data = await result.json();
+
+      const opponentData =
+        data.player1.id === player.id ? data.player2 : data.player1;
+      if (opponentData?.id) setOpponent(opponentData);
+    };
+
+    const interval = setInterval(fetchOpponent, 3000);
+    return () => clearInterval(interval);
+  }, [gameId, player?.id, opponent]);
+
   return (
     <GameContext.Provider
       value={{
         player,
+        opponent,
         registerPlayer,
         createGame,
         joinGame,
@@ -139,6 +214,10 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
         loading,
         gameId,
         setGameId,
+        playerWords,
+        isReady,
+        bothReady,
+        setReady,
       }}
     >
       {children}
