@@ -57,7 +57,7 @@ public static class Endpoints
 
       var game = GameEngine.Games[Guid.Parse(body.gameId)];
 
-      return Results.Ok(new
+      var response = new
       {
         gameId = game.Id,
         player = new
@@ -65,7 +65,9 @@ public static class Endpoints
           id = game.Player2.Id,
           name = game.Player2.Name
         }
-      });
+      };
+
+      return Results.Ok(response);
     });
   }
 
