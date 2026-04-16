@@ -23,7 +23,8 @@ public static class GameEngine
   public static string PlayerHasLetter(Guid gameId, Guid playerId, char xChar)
   {
     bool found = false;
-    Player? player = Games[gameId].GetPlayer(playerId);
+    var game = Games[gameId];
+    Player? player = game.GetPlayer(playerId);
 
     foreach (Word word in player!.WordList)
     {
@@ -36,6 +37,9 @@ public static class GameEngine
         }
       }
     }
+
+    game.Turn = game.Turn == game.Player1 ? game.Player2 : game.Player1;
+
     if (found) { return "Hit"; }
     else { return "Miss"; }
   }
