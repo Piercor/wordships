@@ -5,13 +5,13 @@ import WaitingPage from "./pages/WaitingPage";
 import PlacementPage from "./pages/PlacementPage";
 
 const AppContent = () => {
-  const { player, gameId, isReady, bothReady } = useGame();
+  const { player, gameId, isReady, bothReady, opponent } = useGame();
 
   if (!player) {
     return <RegisterPlayerPage />;
   }
 
-  if (!gameId) return <CreateOrJoinPage />;
+  if (!gameId || !opponent) return <CreateOrJoinPage />;
 
   if (!isReady) return <PlacementPage />;
   if (!bothReady) return <WaitingPage />;
