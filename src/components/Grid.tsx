@@ -1,10 +1,6 @@
 import { useState } from "react";
+import type { Square } from "../interfaces/Grid";
 
-interface Square {
-  letter: string | null;
-  revealed: boolean;
-  hasWord: boolean;
-}
 
 function createEmptyGrid(): Square[][] {
   return Array.from({ length: 10 }, () =>
