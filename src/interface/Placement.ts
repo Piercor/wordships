@@ -4,4 +4,3 @@ export interface Placement {
   col: number;
 }
 
-export type PlacementGrid = (string | null)[][];
