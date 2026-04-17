@@ -70,6 +70,7 @@ public class Game
           {
             int index = rnd.Next(0, wordList.Count);
             randomWords.Add(new(wordList[index]));
+            wordList.RemoveAt(index);
           }
           break;
         case 5:
@@ -77,12 +78,15 @@ public class Game
           {
             int index = rnd.Next(0, wordList.Count);
             randomWords.Add(new(wordList[index]));
+            wordList.RemoveAt(index);
           }
           break;
         case 6:
           {
             int index = rnd.Next(0, wordList.Count);
             randomWords.Add(new(wordList[index]));
+            wordList.RemoveAt(index);
+
           }
           break;
       }
