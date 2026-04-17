@@ -197,7 +197,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
         data.player1.id === player.id ? data.player2 : data.player1;
       if (opponentData?.id) setOpponent(opponentData);
     };
-
+    fetchOpponent();
     const interval = setInterval(fetchOpponent, 3000);
     return () => clearInterval(interval);
   }, [gameId, player?.id, opponent]);
