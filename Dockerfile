@@ -13,11 +13,11 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS backend-builder
 WORKDIR /src
 
 COPY backend/Server/Server.csproj backend/Server/
-RUN dotnet restore backend/Server/Server.csproj
+RUN dotnet restore backend/Server/Server.csproj --packages /src/.nuget/packages
 
 COPY backend/ backend/
 
-RUN dotnet publish backend/Server/Server.csproj -c Release -o /Server/publish --no-restore
+RUN dotnet publish backend/Server/Server.csproj -c Release -o /Server/publish --no-restore -p:RestorePackagesPath=/src/.nuget/packages
 
 # Stage 3: Runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
