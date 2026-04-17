@@ -27,4 +27,15 @@ public class GameTests
     Assert.NotNull(_game.Player1.WordList);
     Assert.NotNull(_game.Player2.WordList);
   }
+
+  [Fact]
+  public void FirstTurn_Test()
+  {
+    _game.Player1 = Game.CreatePlayer("Player1");
+    _game.Player2 = Game.CreatePlayer("Player2");
+
+    var first = _game.FirstTurn();
+
+    Assert.True(first == _game.Player1 || first == _game.Player2);
+  }
 }
