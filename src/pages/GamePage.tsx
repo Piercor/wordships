@@ -1,26 +1,26 @@
-import { useGameData } from "../hooks/useGameData";
 import Grid from "../components/Grid";
+import { useGame } from "../context/GameContext";
 import type { Square } from "../interface/Grid";
 
-function createEmptyGrid(): Square[][] {
+function createEmptyGrid(): Square {
   return Array.from({ length: 10 }, () =>
-    Array.from({ length: 10 }, () => ({
-      letter: null,
-      revealed: false,
-      hasWord: false,
-    }))
+    Array.from({ length: 10 }, () => null)
   );
 }
 
 export default function GamePage() {
-  const { playerData, opponentData } = useGameData();
+  const { player, opponent } = useGame();
   const ownGrid = createEmptyGrid();
   const opponentGrid = createEmptyGrid();
 
   return (
-    <div className="game-page">
-      <Grid opponent={false} grid={ownGrid} playerData={playerData} />
-      <Grid opponent={true} grid={opponentGrid} playerData={opponentData} />
-    </div>
+    <main>
+      <div className="card">
+        <div className="game-page">
+          <Grid opponent={false} grid={ownGrid} player={player} />
+          <Grid opponent={true} grid={opponentGrid} player={opponent} />
+        </div>
+      </div>
+    </main>
   );
 }

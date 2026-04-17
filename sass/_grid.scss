@@ -1,12 +1,24 @@
-.grid-container {
+.grid {
   display: grid;
-  grid-template-columns: repeat(10, 40px);
-  grid-template-rows: repeat(10, 40px);
-  width: 400px;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+  width: 100%;
+
+  @media (min-width: 500px) {
+    grid-template-columns: repeat(10, 40px);
+    width: auto;
+  }
 }
 
 .grid-cell {
-  width: 40px;
-  height: 40px;
-  border: 1px solid rgb(245, 243, 243);
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.2);
+  color: #b3b3b3;
 }

@@ -4,6 +4,7 @@ import type { Game } from "../interface/Game";
 
 interface GameContextInterface {
   player: Player | null;
+  opponent: Player | null;
   gameId: string | null;
   registerPlayer: (name: string) => void;
   createGame: () => Promise<Game | null>;
@@ -15,8 +16,9 @@ interface GameContextInterface {
 
 const GameContext = createContext<GameContextInterface | null>(null);
 
-export const GameProvider = ({ children }: { children: React.ReactNode }) => {
+export const GameProvider = ({ children }: { children: React.ReactNode; }) => {
   const [player, setPlayer] = useState<Player | null>(null);
+  const [opponent, setOpponent] = useState<Player | null>(null);
   const [gameId, setGameId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -128,10 +130,27 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  useEffect(() => {
+    if (!gameId || !player?.id || opponent) return;
+
+    const fetchOpponent = async () => {
+      const result = await fetch(`/api/game/${gameId}`);
+      const data = await result.json();
+
+      const opponentData =
+        data.player1.id === player.id ? data.player2 : data.player1;
+      if (opponentData?.id) setOpponent(opponentData);
+    };
+
+    const interval = setInterval(fetchOpponent, 3000);
+    return () => clearInterval(interval);
+  }, [gameId, player?.id, opponent]);
+
   return (
     <GameContext.Provider
       value={{
         player,
+        opponent,
         registerPlayer,
         createGame,
         joinGame,
