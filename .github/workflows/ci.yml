@@ -62,7 +62,7 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install frontend/system test dependencies
-        run: npm ci
+        run: npm i
 
       - name: Scan npm dependencies
         run: npm audit --audit-level=high
