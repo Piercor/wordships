@@ -86,7 +86,7 @@ jobs:
           path: backend/Server/wwwroot/
 
       - name: Validate Docker build
-        run: docker build -t Wordships:ci .
+        run: docker build -t wordships:ci .
 
       - name: Scan Docker image with Trivy (CRITICAL)
         run: |
@@ -96,7 +96,7 @@ jobs:
             --severity CRITICAL \
             --ignore-unfixed \
             --exit-code 1 \
-            Wordships:ci
+            wordships:ci
 
   tests:
     needs: [security, build]
