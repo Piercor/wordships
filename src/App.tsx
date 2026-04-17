@@ -1,6 +1,7 @@
 import RegisterPlayerPage from "./pages/RegisterPlayerPage";
 import { GameProvider, useGame } from "./context/GameContext";
 import CreateOrJoinPage from "./pages/CreateOrJoinPage";
+import GamePage from "./pages/GamePage";
 
 const AppContent = () => {
   const { player, gameId } = useGame();
@@ -12,9 +13,9 @@ const AppContent = () => {
   if (!gameId) {
     return <CreateOrJoinPage />;
   }
-
-  //TODO: ska returnera sidan för själva spelet sen
-  return <div>Väntar på motspelare... (Game ID: {gameId})</div>;
+  return <GamePage />;
+  // //TODO: ska returnera sidan för själva spelet sen
+  // return <div>Väntar på motspelare... (Game ID: {gameId})</div>;
 };
 
 export default function App() {
