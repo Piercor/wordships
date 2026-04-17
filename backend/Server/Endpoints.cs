@@ -23,7 +23,8 @@ public static class Endpoints
         {
           id = game?.Player2?.Id,
           name = game?.Player2?.Name
-        }
+        },
+        turn = game?.Turn?.Id
       };
 
       return Results.Ok(response);
@@ -56,6 +57,7 @@ public static class Endpoints
       GameEngine.Games[Guid.Parse(body.gameId)].Player2 = Game.CreatePlayer(body.playerName);
 
       var game = GameEngine.Games[Guid.Parse(body.gameId)];
+      game.Turn = game.FirstTurn();
 
       var response = new
       {

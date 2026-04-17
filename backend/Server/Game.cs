@@ -6,6 +6,7 @@ public class Game
   public Player? Player1;
   public Player? Player2;
   public bool BothReady => Player1?.IsReady == true && Player2?.IsReady == true;
+  public Player? Turn;
 
   public Game(Guid id)
   {
@@ -97,5 +98,11 @@ public class Game
   public static Player CreatePlayer(string name)
   {
     return new(Guid.NewGuid(), name, GetWords());
+  }
+
+  public Player? FirstTurn()
+  {
+    Random rnd = new Random();
+    return rnd.Next(2) == 0 ? Player1 : Player2;
   }
 }

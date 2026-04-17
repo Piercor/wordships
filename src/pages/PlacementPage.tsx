@@ -137,7 +137,7 @@ const PlacementPage = () => {
                 return (
                   <div
                     key={rowIndex * GRID_SIZE + colIndex}
-                    className={`cell${cell ? " placed" : ""}${previewState === "valid" ? " preview" : ""}${previewState === "invalid" ? " invalid" : ""}`}
+                    className={`grid-cell${cell ? " placed" : ""}${previewState === "valid" ? " preview" : ""}${previewState === "invalid" ? " invalid" : ""}`}
                     onClick={() => handleCellClick(rowIndex, colIndex)}
                     onMouseEnter={() => {
                       setHoverCol(colIndex);

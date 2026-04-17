@@ -3,6 +3,7 @@ import { GameProvider, useGame } from "./context/GameContext";
 import CreateOrJoinPage from "./pages/CreateOrJoinPage";
 import WaitingPage from "./pages/WaitingPage";
 import PlacementPage from "./pages/PlacementPage";
+import GamePage from "./pages/GamePage";
 
 const AppContent = () => {
   const { player, gameId, isReady, bothReady, opponent } = useGame();
@@ -16,8 +17,7 @@ const AppContent = () => {
   if (!isReady) return <PlacementPage />;
   if (!bothReady) return <WaitingPage />;
 
-  //TODO: ska returnera sidan för själva spelet sen
-  return <div>Game</div>;
+  return <GamePage />;
 };
 
 export default function App() {
