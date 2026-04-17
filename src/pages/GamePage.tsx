@@ -1,12 +1,6 @@
 import Grid from "../components/Grid";
 import { useGame } from "../context/GameContext";
-import type { Square } from "../interface/Grid";
-
-function createEmptyGrid(): Square {
-  return Array.from({ length: 10 }, () =>
-    Array.from({ length: 10 }, () => null),
-  );
-}
+import { createEmptyGrid } from "../utils/createEmptyGrid";
 
 export default function GamePage() {
   const { player, opponent } = useGame();

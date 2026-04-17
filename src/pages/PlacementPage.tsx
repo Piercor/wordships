@@ -1,38 +1,24 @@
 import { useState } from "react";
 import { useGame } from "../context/GameContext";
 import type { Word } from "../interface/Word";
-import type { Placement, PlacementGrid } from "../interface/Placement";
+import type { Placement } from "../interface/Placement";
+import type { Square } from "../interface/Grid";
+import { createEmptyGrid } from "../utils/createEmptyGrid";
 
 const GRID_SIZE = 10;
-
-const createEmptyGrid = (): PlacementGrid => {
-  const grid = [];
-  for (let row = 0; row < GRID_SIZE; row++) {
-    const newRow = [];
-    for (let col = 0; col < GRID_SIZE; col++) {
-      newRow.push(null);
-    }
-    grid.push(newRow);
-  }
-  return grid;
-};
 
 const PlacementPage = () => {
   const { playerWords, setReady, error } = useGame();
   const [selectedWord, setSelectedWord] = useState<Word | null>(null);
   const [placements, setPlacements] = useState<Placement[]>([]);
-  const [grid, setGrid] = useState<PlacementGrid>(createEmptyGrid);
+  const [grid, setGrid] = useState<Square>(createEmptyGrid);
   const [hoverCol, setHoverCol] = useState<number | null>(null);
   const [hoverRow, setHoverRow] = useState<number | null>(null);
 
-  // Lista med namn på redan placerade ord
   const placedWords = placements.map((p) => p.wordName);
-
-  // Ord som inte har placerats än
   const wordsLeft = playerWords.filter(
     (word) => !placedWords.includes(word.name),
   );
-
   const allWordsPlaced = wordsLeft.length === 0;
 
   //Kollar om en cell ska markeras när man hovrar;
@@ -47,7 +33,7 @@ const PlacementPage = () => {
 
   // Kollar om ett ord kan placeras på en given rad och kolumn
   const canPlace = (
-    grid: PlacementGrid,
+    grid: Square,
     word: string,
     row: number,
     col: number,
