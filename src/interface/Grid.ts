@@ -4,18 +4,8 @@ export interface Square {
   revealed: boolean;
   hasWord: boolean;
 }
-interface Letter {
-  value: string;
-  found: boolean;
-}
-interface Word {
-  name: string;
-  letters: Letter[];
-}
 export interface PlayerResponse {
-  player: Player & {
-    wordList: Word[];
-  };
+  player: Player;
 }
 export interface GridProps {
   opponent: boolean;
