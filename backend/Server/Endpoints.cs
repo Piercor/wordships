@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Dyndata;
 
 namespace Server;
 
@@ -32,11 +31,10 @@ public static class Endpoints
     });
 
     // Takes a playerName and creates a game with the name of that player. Returns the game id as "GameId".
-    App.MapPost("/api/game/create", (HttpContext context, JsonElement bodyJson) =>
+    App.MapPost("/api/game/create", (JsonElement bodyJson) =>
     {
-      var body = JSON.Parse(bodyJson.ToString());
       Game game = new(Guid.NewGuid());
-      game.Player1 = Game.CreatePlayer(body.playerName);
+      game.Player1 = Game.CreatePlayer(bodyJson.GetProperty("playerName").GetString()!);
       GameEngine.Games.Add(game.Id, game);
 
       return Results.Ok(new
@@ -51,12 +49,10 @@ public static class Endpoints
     });
 
     // Takes a gameId and a playerName and creates a second player to join the game. Returns GameInfo with players names.
-    App.MapPost("/api/game/join", (HttpContext context, JsonElement bodyJson) =>
+    App.MapPost("/api/game/join", (JsonElement bodyJson) =>
     {
-      var body = JSON.Parse(bodyJson.ToString());
-      GameEngine.Games[Guid.Parse(body.gameId)].Player2 = Game.CreatePlayer(body.playerName);
-
-      var game = GameEngine.Games[Guid.Parse(body.gameId)];
+      var game = GameEngine.Games[Guid.Parse(bodyJson.GetProperty("gameId").GetString()!)];
+      game.Player2 = Game.CreatePlayer(bodyJson.GetProperty("playerName").GetString()!);
       game.Turn = game.FirstTurn();
 
       var response = new
@@ -76,7 +72,7 @@ public static class Endpoints
   public static void PlayerEndpoints(this WebApplication App)
   {
     // Gets a player id, name & word list with player's id as API call.
-    App.MapGet("/api/player/{id}", (HttpContext context, Guid id) =>
+    App.MapGet("/api/player/{id}", (Guid id) =>
     {
       var player = GameEngine.GetPlayer(id);
 
@@ -103,11 +99,12 @@ public static class Endpoints
 
     // Takes gameId, playerId (the player to guess the letter from) and a letter and makes a guess.
     // Returns hit or miss. If hit, the state of the letter would change from "Found = false" to "Found = true".
-    App.MapPost("/api/player/guess", (HttpContext context, JsonElement bodyJson) =>
+    App.MapPost("/api/player/guess", (JsonElement bodyJson) =>
     {
-      var body = JSON.Parse(bodyJson.ToString());
-
-      var response = GameEngine.PlayerHasLetter(Guid.Parse(body.gameId), Guid.Parse(body.playerId), char.Parse(body.letter));
+      var response = GameEngine.PlayerHasLetter(Guid.Parse(bodyJson.GetProperty("gameId").GetString()!),
+      Guid.Parse(bodyJson.GetProperty("playerId").GetString()!),
+      char.Parse(bodyJson.GetProperty("letter").GetString()!)
+      );
 
       return Results.Ok(response);
     });

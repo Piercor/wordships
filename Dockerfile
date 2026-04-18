@@ -17,7 +17,7 @@ RUN dotnet restore backend/Server/Server.csproj
 
 COPY backend/ backend/
 
-RUN dotnet publish backend/Server/Server.csproj -c Release -o /Server/publish
+RUN dotnet publish backend/Server/Server.csproj -c Release -o /Server/publish --no-restore
 
 # Stage 3: Runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
