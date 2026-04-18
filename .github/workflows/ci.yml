@@ -148,7 +148,7 @@ jobs:
         run: npm ci
 
       - name: Build frontend
-        run: npm run build 
+        run: npm run build
 
       - name: Install Playwright browsers
         if: ${{ matrix.suite == 'e2e' }}
@@ -171,12 +171,21 @@ jobs:
         run: |
           ASPNETCORE_URLS=http://localhost:5001 dotnet out/Server.dll > backend.log 2>&1 &
           for i in $(seq 1 30); do
-            nc -z localhost 5001 && echo "Server is up" && break
-            echo "Waiting for server... ($i/30)"
+            nc -z localhost 5001 && echo "Backend is up" && break
+            echo "Waiting for backend... ($i/30)"
             sleep 2
           done
           nc -z localhost 5001 || (cat backend.log && exit 1)
-          echo "Server started"
+
+          npm run dev > frontend.log 2>&1 &
+          for i in $(seq 1 30); do
+            nc -z localhost 5173 && echo "Frontend is up" && break
+            echo "Waiting for frontend... ($i/30)"
+            sleep 2
+          done
+          nc -z localhost 5173 || (cat frontend.log && exit 1)
+
+          echo "Both servers started"
           npm run test:e2e
 
       - name: Upload test artifacts
@@ -189,6 +198,7 @@ jobs:
             playwright-report/**
             test-results/**
             backend.log
+            frontend.log
           if-no-files-found: ignore
 
   report:
