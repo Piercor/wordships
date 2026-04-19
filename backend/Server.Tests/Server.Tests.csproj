@@ -22,4 +22,10 @@
     <ProjectReference Include="..\Server\Server.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="..\Server\src\words.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
