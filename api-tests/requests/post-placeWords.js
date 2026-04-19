@@ -11,7 +11,7 @@ export default {
   }
 };
 
-export const postResponse = () => {
+export function postResponse ()  {
   pm.test('Status code is 200', () => pm.response.to.have.status(200));
 
   const json = pm.response.json();
@@ -21,6 +21,6 @@ export const postResponse = () => {
   })
 
   pm.test("ready is a boolean", () => 
-  pm.expect(json.ready).to.be.a("boolean"));
+    pm.expect(json.ready).to.be.a("boolean"));
+  
 };
-
