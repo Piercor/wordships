@@ -61,6 +61,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
       if (!result.ok) throw new Error("Failed to create game");
       const data = await result.json();
       setPlayer({ id: data.player.id, name: data.player.name });
+      setGameId(data.gameId);
 
       const playerResult = await fetch(`/api/player/${data.player.id}`);
       const playerData = await playerResult.json();
@@ -253,6 +254,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
 
         const opponentResult = await fetch(`/api/player/${opponent?.id}`);
         const opponentData = await opponentResult.json();
+
         setOpponentWords(opponentData.player.wordList);
       }
     };
@@ -276,7 +278,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Hämta egna ord under spelet
   useEffect(() => {
-    if (!player?.id || !bothReady) return;
+    if (!player?.id) return;
 
     const fetchPlayerWords = async () => {
       const result = await fetch(`/api/player/${player.id}`);
@@ -287,7 +289,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     fetchPlayerWords();
     const interval = setInterval(fetchPlayerWords, 3000);
     return () => clearInterval(interval);
-  }, [player?.id, bothReady]);
+  }, [player?.id]);
 
   return (
     <GameContext.Provider
