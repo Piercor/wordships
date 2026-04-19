@@ -10,7 +10,11 @@ export default function GamePage() {
   const [playerGrid, setPlayerGrid] = useState<Square>(createEmptyGrid);
   const [opponentGrid, setOpponentGrid] = useState<Square>(createEmptyGrid);
 
-  const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
+  const [guessedLetters, setGuessedLetters] = useState<string[]>(() => {
+    const saved = sessionStorage.getItem("guessedLetters");
+    return saved ? JSON.parse(saved) : [];
+  });
+
   const [input, setInput] = useState("");
   const [inputError, setInputError] = useState("");
 
@@ -23,6 +27,10 @@ export default function GamePage() {
   useEffect(() => {
     setOpponentGrid(buildGrid(opponentWords));
   }, [opponentWords]);
+
+  useEffect(() => {
+    sessionStorage.setItem("guessedLetters", JSON.stringify(guessedLetters));
+  }, [guessedLetters]);
 
   const handleGuess = async (e: React.SubmitEvent) => {
     e.preventDefault();
@@ -62,7 +70,7 @@ export default function GamePage() {
       setInput(value);
       setInputError("");
     } else {
-      setInputError("Only letters are allowed");
+      setInputError("Only letters (A-Z) are allowed");
     }
   };
 
