@@ -71,7 +71,9 @@ jobs:
         run: npm run build
 
       - name: Publish backend
-        run: dotnet publish backend/Server/Server.csproj -c Release -o out --no-restore
+        run: |
+          dotnet publish backend/Server/Server.csproj -c Release -o out --no-restore
+          cp backend/Server/src/words.csv out/words.csv
 
       - name: Upload publish artifact
         uses: actions/upload-artifact@v4
