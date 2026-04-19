@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test:xunit": "dotnet test backend/Wordships.slnx",
-    "test:api": "post-they run api-tests",
+    "test:api": "npx post-they run api-tests",
     "test:e2e": "npx bddgen && npx playwright test",
     "test": "npm run test:xunit && npm run test:api && npm run test:e2e"
   },
@@ -33,6 +33,7 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
     "playwright-bdd": "^8.5.0",
+    "post-they": "latest",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.58.0",
     "vite": "^8.0.4"
