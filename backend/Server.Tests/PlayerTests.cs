@@ -39,4 +39,29 @@ public class PlayerTests
     Assert.Equal(_player.WordList[index].LetterList.Count, expected);
   }
 
+  [Fact]
+  public void IsReady_False_Test()
+  {
+    Assert.False(_player.IsReady);
+  }
+
+  [Fact]
+  public void IsReady_True_Test()
+  {
+    _player.IsReady = true;
+    Assert.True(_player.IsReady);
+  }
+
+  [Fact]
+  public void LetterFound_False_Test()
+  {
+    Assert.False(_player.WordList[0].LetterList[0].Found);
+  }
+
+  [Fact]
+  public void LetterPosition_Default_Test()
+  {
+    Assert.Equal(-1, _player.WordList[0].LetterList[0].Row);
+    Assert.Equal(-1, _player.WordList[0].LetterList[0].Col);
+  }
 }
