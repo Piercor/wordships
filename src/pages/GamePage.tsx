@@ -36,7 +36,11 @@ export default function GamePage() {
     e.preventDefault();
     const letter = input.toLowerCase().trim();
     if (!letter || letter.length !== 1) return;
-    if (guessedLetters.includes(letter)) return;
+
+    if (guessedLetters.includes(letter)) {
+      setInputError("You have already guessed this letter");
+      return;
+    }
 
     const data = await guessLetter(letter);
 
@@ -65,7 +69,6 @@ export default function GamePage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-
     if (/^[a-zA-Z]$/.test(value) || value === "") {
       setInput(value);
       setInputError("");
