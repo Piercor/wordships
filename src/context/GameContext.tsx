@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type { Player } from "../interface/Player";
-import type { Game } from "../interface/Game";
+import type { Game, GuessResult } from "../interface/Game";
 import type { Word } from "../interface/Word";
 import type { Placement } from "../interface/Placement";
 
@@ -10,14 +10,17 @@ interface GameContextInterface {
   gameId: string | null;
   registerPlayer: (name: string) => void;
   createGame: () => Promise<Game | null>;
-  joinGame: (gameId: string) => Promise<Game | null>;
+  joinGame: (id: string) => Promise<Game | null>;
   error: string | null;
   loading: boolean;
   setGameId: (id: string) => void;
   playerWords: Word[];
+  opponentWords: Word[];
   isReady: boolean;
   bothReady: boolean;
   setReady: (placements: Placement[]) => Promise<void>;
+  guessLetter: (letter: string) => Promise<GuessResult>;
+  turn: string | null;
 }
 
 const GameContext = createContext<GameContextInterface | null>(null);
@@ -29,89 +32,17 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [playerWords, setPlayerWords] = useState<Word[]>([]);
+  const [opponentWords, setOpponentWords] = useState<Word[]>([]);
   const [isReady, setIsReady] = useState(false);
   const [bothReady, setBothReady] = useState(false);
+  const [turn, setTurn] = useState<string | null>(null);
 
-  useEffect(() => {
-    const saved =
-      sessionStorage.getItem("player") ?? localStorage.getItem("player");
-
-    if (saved) {
-      try {
-        const parsedPlayer = JSON.parse(saved);
-        setPlayer(parsedPlayer);
-
-        sessionStorage.setItem("player", JSON.stringify(parsedPlayer));
-      } catch (e) {
-        console.error("Failed to load saved player ", e);
-      }
-    }
-
-    const savedGame =
-      sessionStorage.getItem("game") ?? localStorage.getItem("game");
-
-    if (savedGame) {
-      try {
-        const game = JSON.parse(savedGame);
-        setGameId(game.gameId);
-
-        sessionStorage.setItem("game", JSON.stringify({ gameId: game.gameId }));
-      } catch (e) {
-        console.error("Failed to load saved game", e);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    if (player) {
-      sessionStorage.setItem("player", JSON.stringify(player));
-    }
-  }, [player]);
-
-  useEffect(() => {
-    if (gameId) {
-      sessionStorage.setItem("game", JSON.stringify({ gameId }));
-    }
-  }, [gameId]);
-
-  useEffect(() => {
-    if (!gameId || !player?.id || !isReady || bothReady) return;
-
-    const checkReady = async () => {
-      const result = await fetch(`/api/game/${gameId}/ready`);
-      const data = await result.json();
-      if (data.bothReady) setBothReady(true);
-    };
-
-    const interval = setInterval(checkReady, 3000);
-    return () => clearInterval(interval);
-  }, [gameId, player?.id, isReady, bothReady]);
-
-  const setReady = async (placements: Placement[]) => {
-    if (!player?.id || !gameId) return;
-
-    const result = await fetch("/api/player/place", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        playerId: player.id,
-        gameId,
-        placements,
-      }),
-    });
-    if (!result.ok) {
-      const errorData = await result.json();
-      setError(errorData.error || "Failed to place words");
-      return;
-    }
-
-    setIsReady(true);
-  };
-
+  // Registrera spelare med namn
   const registerPlayer = (name: string) => {
     setPlayer({ id: "", name });
   };
 
+  // Skapa ett nytt spel
   const createGame = async (): Promise<Game | null> => {
     if (!player) {
       setError("Player not registered");
@@ -129,8 +60,11 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (!result.ok) throw new Error("Failed to create game");
       const data = await result.json();
-
       setPlayer({ id: data.player.id, name: data.player.name });
+
+      const playerResult = await fetch(`/api/player/${data.player.id}`);
+      const playerData = await playerResult.json();
+      setPlayerWords(playerData.player.wordList);
 
       return data;
     } catch (e: unknown) {
@@ -141,6 +75,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  // Joina ett befintligt spel
   const joinGame = async (id: string): Promise<Game | null> => {
     if (!player) {
       setError("Player not registered");
@@ -165,6 +100,10 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
       const data = await result.json();
       setPlayer({ id: data.player.id, name: data.player.name });
 
+      const playerResult = await fetch(`/api/player/${data.player.id}`);
+      const playerData = await playerResult.json();
+      setPlayerWords(playerData.player.wordList);
+
       return data;
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Unknown error");
@@ -174,18 +113,101 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  // Placera ut ord och sätt spelaren som redo
+  const setReady = async (placements: Placement[]) => {
+    if (!player?.id || !gameId) return;
+
+    const result = await fetch("/api/player/place", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        playerId: player.id,
+        placements,
+      }),
+    });
+
+    if (!result.ok) {
+      const errorData = await result.json();
+      setError(errorData.error || "Failed to place words");
+      return;
+    }
+
+    setIsReady(true);
+  };
+
+  // Skicka en gissning på en bokstav och returnera om det var träff eller miss
+  const guessLetter = async (letter: string): Promise<GuessResult> => {
+    const result = await fetch("/api/player/guess", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ gameId, playerId: opponent?.id, letter }),
+    });
+    const data = await result.json();
+    const gameResult = await fetch(`/api/game/${gameId}`);
+    const gameData = await gameResult.json();
+    setTurn(gameData.turn);
+
+    return data;
+  };
+
+  // Ladda in sparad state från sessionStorage
   useEffect(() => {
-    if (!player?.id) return;
+    const saved =
+      sessionStorage.getItem("player") ?? localStorage.getItem("player");
 
-    const fetchWords = async () => {
-      const playerResult = await fetch(`/api/player/${player.id}`);
-      const playerData = await playerResult.json();
-      setPlayerWords(playerData.player.wordList);
-    };
+    if (saved) {
+      try {
+        const parsedPlayer = JSON.parse(saved);
+        setPlayer(parsedPlayer);
+        sessionStorage.setItem("player", JSON.stringify(parsedPlayer));
+      } catch (e) {
+        console.error("Failed to load saved player ", e);
+      }
+    }
 
-    fetchWords();
-  }, [player?.id]);
+    const savedGame =
+      sessionStorage.getItem("game") ?? localStorage.getItem("game");
 
+    if (savedGame) {
+      try {
+        const game = JSON.parse(savedGame);
+        setGameId(game.gameId);
+
+        sessionStorage.setItem("game", JSON.stringify({ gameId: game.gameId }));
+      } catch (e) {
+        console.error("Failed to load saved game", e);
+      }
+    }
+
+    if (sessionStorage.getItem("isReady")) setIsReady(true);
+    if (sessionStorage.getItem("bothReady")) setBothReady(true);
+  }, []);
+
+  // Spara player till sessionStorage
+  useEffect(() => {
+    if (player) {
+      sessionStorage.setItem("player", JSON.stringify(player));
+    }
+  }, [player]);
+
+  // Spara gameId till sessionStorage
+  useEffect(() => {
+    if (gameId) {
+      sessionStorage.setItem("game", JSON.stringify({ gameId }));
+    }
+  }, [gameId]);
+
+  // Spara isReady till sessionStorage
+  useEffect(() => {
+    if (isReady) sessionStorage.setItem("isReady", "true");
+  }, [isReady]);
+
+  // Spara bothReady till sessionStorage
+  useEffect(() => {
+    if (bothReady) sessionStorage.setItem("bothReady", "true");
+  }, [bothReady]);
+
+  // Vänta på att motståndaren ansluter
   useEffect(() => {
     if (!gameId || !player?.id || opponent) return;
 
@@ -193,31 +215,99 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
       const result = await fetch(`/api/game/${gameId}`);
       const data = await result.json();
 
+      setTurn(data.turn);
       const opponentData =
         data.player1.id === player.id ? data.player2 : data.player1;
       if (opponentData?.id) setOpponent(opponentData);
     };
+
     fetchOpponent();
     const interval = setInterval(fetchOpponent, 3000);
     return () => clearInterval(interval);
   }, [gameId, player?.id, opponent]);
+
+  // Uppdatera vems tur det är
+  useEffect(() => {
+    if (!gameId || !bothReady) return;
+
+    const fetchTurn = async () => {
+      const result = await fetch(`/api/game/${gameId}`);
+      const data = await result.json();
+      setTurn(data.turn);
+    };
+
+    fetchTurn();
+    const interval = setInterval(fetchTurn, 3000);
+    return () => clearInterval(interval);
+  }, [gameId, bothReady]);
+
+  // Vänta på att båda spelarna är redo
+  useEffect(() => {
+    if (!gameId || !player?.id || !isReady || bothReady) return;
+
+    const checkReady = async () => {
+      const result = await fetch(`/api/game/${gameId}/ready`);
+      const data = await result.json();
+      if (data.bothReady) {
+        setBothReady(true);
+
+        const opponentResult = await fetch(`/api/player/${opponent?.id}`);
+        const opponentData = await opponentResult.json();
+        setOpponentWords(opponentData.player.wordList);
+      }
+    };
+
+    const interval = setInterval(checkReady, 3000);
+    return () => clearInterval(interval);
+  }, [gameId, player?.id, isReady, bothReady, opponent?.id]);
+
+  // Hämta motståndarens ord när båda spelarna är redo
+  useEffect(() => {
+    if (!bothReady || !opponent?.id) return;
+
+    const fetchOpponentWords = async () => {
+      const result = await fetch(`/api/player/${opponent.id}`);
+      const data = await result.json();
+      setOpponentWords(data.player.wordList);
+    };
+
+    fetchOpponentWords();
+  }, [bothReady, opponent?.id]);
+
+  // Hämta egna ord under spelet
+  useEffect(() => {
+    if (!player?.id || !bothReady) return;
+
+    const fetchPlayerWords = async () => {
+      const result = await fetch(`/api/player/${player.id}`);
+      const data = await result.json();
+      setPlayerWords(data.player.wordList);
+    };
+
+    fetchPlayerWords();
+    const interval = setInterval(fetchPlayerWords, 3000);
+    return () => clearInterval(interval);
+  }, [player?.id, bothReady]);
 
   return (
     <GameContext.Provider
       value={{
         player,
         opponent,
+        gameId,
         registerPlayer,
         createGame,
         joinGame,
         error,
         loading,
-        gameId,
         setGameId,
         playerWords,
+        opponentWords,
         isReady,
         bothReady,
         setReady,
+        guessLetter,
+        turn,
       }}
     >
       {children}
