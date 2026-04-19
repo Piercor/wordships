@@ -170,6 +170,11 @@ jobs:
           nc -z localhost 5001 || (cat backend.log && exit 1)
           echo "Server started"
           npm run test:api
+
+      - name: Print backend log
+        if: ${{ always() && matrix.suite == 'api' }}
+        run: cat backend.log || true
+
       - name: Run E2E tests
         if: ${{ matrix.suite == 'e2e' }}
         run: |
