@@ -158,15 +158,18 @@ jobs:
         if: ${{ matrix.suite == 'unit' }}
         run: dotnet test backend/Wordships.slnx --logger "trx;LogFileName=unit-tests.trx" --results-directory TestResults
 
-      ### this section was commented away
-      - name: Run API tests 
+      - name: Run API tests
         if: ${{ matrix.suite == 'api' }}
-        run: | 
-          npm run backend & 
-          npx wait-on http://localhost:5001 --timeout 60000
+        run: |
+          ASPNETCORE_URLS=http://localhost:5001 dotnet out/Server.dll > backend.log 2>&1 &
+          for i in $(seq 1 30); do
+            nc -z localhost 5001 && echo "Backend is up" && break
+            echo "Waiting for backend... ($i/30)"
+            sleep 2
+          done
+          nc -z localhost 5001 || (cat backend.log && exit 1)
           echo "Server started"
           npm run test:api
-       ###
       - name: Run E2E tests
         if: ${{ matrix.suite == 'e2e' }}
         run: |
