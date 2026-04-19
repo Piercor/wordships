@@ -1,10 +1,175 @@
-.game-page {
-  display: flex;
-  flex-direction: row;
-  gap: 2rem;
-  justify-content: center;
+.game-main {
+  @media (min-width: 500px) {
+    max-width: 100%;
+  }
 }
 
-.game-main {
-  max-width: 100%;
+.game-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  width: 100%;
+}
+
+.grids {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  width: 100%;
+
+  @media (min-width: 900px) {
+    flex-direction: row;
+    justify-content: center;
+    gap: 48px;
+  }
+}
+
+.grids > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  h2 {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+}
+
+.game-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.guess-form {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+
+  input {
+    width: 44px;
+    height: 44px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0;
+    color: white;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+
+    &:valid {
+      background: rgba(0, 0, 0, 0.4);
+      color: white;
+    }
+  }
+
+  button {
+    width: auto;
+    height: 44px;
+    margin-top: 0;
+    padding: 12px 32px;
+  }
+}
+
+.guessed-letters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 12px 16px;
+  border-radius: 8px;
+}
+
+.guessed-label {
+  color: #b3b3b3;
+  font-weight: 600;
+  font-size: 14px;
+  margin-right: 4px;
+}
+
+.guessed-letter {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: #b3b3b3;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.game-status {
+  display: flex;
+  gap: 12px;
+}
+
+.status-badge {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+
+  &.found {
+    background: rgba(71, 126, 90, 0.3);
+    color: #7ec89a;
+  }
+
+  &.left {
+    background: rgba(180, 100, 50, 0.3);
+    color: #c89a7e;
+  }
+}
+
+.placement-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+  justify-content: center;
+
+  button {
+    width: auto;
+    margin-top: 0;
+    padding: 8px 16px;
+
+    &.selected {
+      background: #2a5c3d;
+      outline: 2px solid white;
+    }
+  }
+}
+
+.board-subtitle {
+  color: #666;
+  font-size: 13px;
+  text-align: center;
+  margin-top: -12px;
+  margin-bottom: 16px;
+}
+
+.turn-indicator {
+  font-size: 13px;
+  font-weight: 600;
+  color: #7ec89a;
+  background: rgba(71, 126, 90, 0.2);
+  padding: 4px 14px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+
+  &.waiting {
+    color: #b3b3b3;
+    background: rgba(255, 255, 255, 0.06);
+  }
 }
