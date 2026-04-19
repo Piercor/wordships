@@ -19,6 +19,13 @@ When("I click Create Game", async ({ page }) => {
       }
     });
   });
+  await page.route("*/**/api/player/123", async (route) => {
+    await route.fulfill({
+      json: {
+        player: { id: "123", name: "Anna", wordList: [] }
+      }
+    });
+  });
   await page.getByTestId("create-game-btn").click();
 });
 
@@ -47,6 +54,13 @@ When("I enter the Game ID", async ({ page }) => {
       }
     });
   });
+    await page.route("*/**/api/player/123", async (route) => {
+    await route.fulfill({
+      json: {
+        player: { id: "123", name: "Anna", wordList: [] }
+      }
+    });
+  });
   await page.getByTestId("join-game-btn").click();
   });
 
@@ -57,6 +71,7 @@ When("I enter the Game ID", async ({ page }) => {
       json: {error: "Failed to join game"}
     })
     });
+
     await page.getByTestId("join-game-btn").click();
   });
 
