@@ -62,7 +62,7 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install frontend/system test dependencies
-        run: npm ci ### <=== !!! npp i before
+        run: npm ci
 
       - name: Scan npm dependencies
         run: npm audit --audit-level=high --omit=dev
@@ -106,7 +106,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [unit, api, e2e] ### <=== !!! no api before
+        suite: [unit, api, e2e]
 
     steps:
       - uses: actions/checkout@v4
