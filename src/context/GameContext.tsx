@@ -61,7 +61,8 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
       if (!result.ok) throw new Error("Failed to create game");
       const data = await result.json();
       setPlayer({ id: data.player.id, name: data.player.name });
-      setGameId(data.gameId);
+
+      sessionStorage.setItem("game", JSON.stringify({ gameId: data.gameId }));
 
       const playerResult = await fetch(`/api/player/${data.player.id}`);
       const playerData = await playerResult.json();
