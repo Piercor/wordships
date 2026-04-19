@@ -1,5 +1,8 @@
 name: Testing
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 on: 
     push: 
         branches: ["main"]
@@ -173,9 +176,6 @@ jobs:
           echo "Server started"
           npm run test:api
 
-      - name: Print backend log
-        if: ${{ always() && matrix.suite == 'api' }}
-        run: cat backend.log || true
 
       - name: Run E2E tests
         if: ${{ matrix.suite == 'e2e' }}
@@ -208,8 +208,6 @@ jobs:
             TestResults/**
             playwright-report/**
             test-results/**
-            backend.log
-            frontend.log
           if-no-files-found: ignore
 
   report:
