@@ -4,3 +4,5 @@ export interface Game {
   gameId: string;
   player: Player;
 }
+
+export type GuessResult = "Hit" | "Miss";
