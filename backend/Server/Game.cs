@@ -32,7 +32,7 @@ public class Game
   public static List<Word> GetWords()
   {
     Dictionary<int, List<string>> words = new();
-    string[] wordsCsv = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "Server", "src", "words.csv"));
+    string[] wordsCsv = File.ReadAllLines(Path.Combine(AppContext.BaseDirectory, "words.csv"));
 
     foreach (string line in wordsCsv)
     {
