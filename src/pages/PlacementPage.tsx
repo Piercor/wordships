@@ -4,8 +4,7 @@ import type { Word } from "../interface/Word";
 import type { Placement } from "../interface/Placement";
 import type { Square } from "../interface/Grid";
 import { createEmptyGrid } from "../utils/createEmptyGrid";
-
-const GRID_SIZE = 10;
+import { GRID_SIZE } from "../utils/constants";
 
 const PlacementPage = () => {
   const { playerWords, setReady, error } = useGame();
@@ -46,14 +45,14 @@ const PlacementPage = () => {
 
     // Kontrollera att cellerna under ordet är lediga
     for (let i = 0; i < word.length; i++) {
-      if (grid[row][col + i] !== null) return false;
+      if (grid[row][col + i].letter !== null) return false;
     }
 
     // Kontrollera att det finns en tom cell till vänster om ordet
-    if (start > 0 && grid[row][start - 1] !== null) return false;
+    if (start > 0 && grid[row][start - 1].letter !== null) return false;
 
     // Kontrollera att det finns en tom cell till höger om ordet
-    if (end < GRID_SIZE - 1 && grid[row][end + 1] !== null) return false;
+    if (end < GRID_SIZE - 1 && grid[row][end + 1].letter !== null) return false;
 
     return true;
   };
@@ -65,7 +64,11 @@ const PlacementPage = () => {
     // Kopiera grid och placera ut bokstäverna
     const newGrid = grid.map((r) => [...r]);
     for (let i = 0; i < selectedWord.name.length; i++) {
-      newGrid[row][col + i] = selectedWord.name[i];
+      newGrid[row][col + i] = {
+        letter: selectedWord.name[i],
+        wordName: selectedWord.name,
+        found: false,
+      };
     }
 
     setGrid(newGrid);
@@ -123,7 +126,7 @@ const PlacementPage = () => {
                 return (
                   <div
                     key={rowIndex * GRID_SIZE + colIndex}
-                    className={`grid-cell${cell ? " placed" : ""}${previewState === "valid" ? " preview" : ""}${previewState === "invalid" ? " invalid" : ""}`}
+                    className={`cell${cell.letter ? " placed" : ""}${previewState === "valid" ? " preview" : ""}${previewState === "invalid" ? " invalid" : ""}`}
                     onClick={() => handleCellClick(rowIndex, colIndex)}
                     onMouseEnter={() => {
                       setHoverCol(colIndex);
@@ -134,7 +137,7 @@ const PlacementPage = () => {
                       setHoverRow(null);
                     }}
                   >
-                    {cell?.toUpperCase() ?? previewLetter ?? ""}
+                    {cell?.letter?.toUpperCase() ?? previewLetter ?? ""}
                   </div>
                 );
               }),
