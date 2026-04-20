@@ -1,7 +1,8 @@
 Feature: Place words
 
   Background:
-    Given I have already registered as "Anna" and joined a game
+    Given I have registered as "Anna"
+    And I have created a game
 
   Scenario: Grid is visible
     Then I should see the placement grid

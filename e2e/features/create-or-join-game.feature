@@ -1,7 +1,7 @@
 Feature: Create or Join Game
 
   Background:
-    Given I have already registered as "Anna"
+    Given I have registered as "Anna"
 
   Scenario: Create new game
     When I click Create Game
