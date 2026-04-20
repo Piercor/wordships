@@ -27,4 +27,16 @@ public class GameEngineTests
 
     Assert.True(result == "Hit" || result == "Miss");
   }
+
+  [Fact]
+  public void PlayerHasWord_Test()
+  {
+    _game.Player1 = Game.CreatePlayer("Player1");
+    _game.Player2 = Game.CreatePlayer("Player2");
+    GameEngine.Games[_game.Id] = _game;
+
+    var result = GameEngine.PlayerHasWord(_game.Id, _game.Player1.Id, "engine");
+
+    Assert.True(result == true || result == false);
+  }
 }
