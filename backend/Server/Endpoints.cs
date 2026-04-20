@@ -101,11 +101,18 @@ public static class Endpoints
     // Returns hit or miss. If hit, the state of the letter would change from "Found = false" to "Found = true".
     App.MapPost("/api/player/guess", (JsonElement bodyJson) =>
     {
-      var response = GameEngine.PlayerHasLetter(
-         Guid.Parse(bodyJson.GetProperty("gameId").GetString()!),
-         Guid.Parse(bodyJson.GetProperty("playerId").GetString()!),
-         char.Parse(bodyJson.GetProperty("letter").GetString()!)
-       );
+      Game game = GameEngine.Games[Guid.Parse(bodyJson.GetProperty("gameId").GetString()!)];
+      Guid playerGuessingId = Guid.Parse(bodyJson.GetProperty("playerGuessingId").GetString()!);
+      Guid playerToGuessId = Guid.Parse(bodyJson.GetProperty("playerToGuessId").GetString()!);
+      char letter = char.Parse(bodyJson.GetProperty("letter").GetString()!);
+
+      var response = GameEngine.PlayerHasLetter(game.Id, playerToGuessId, letter);
+
+      if (GameEngine.FoundAllWords(game.Id, playerToGuessId))
+      {
+        game.Winner = game.GetPlayer(playerGuessingId);
+        response = $"Winner: {game?.Winner?.Id}";
+      }
 
       return Results.Ok(response);
     });
