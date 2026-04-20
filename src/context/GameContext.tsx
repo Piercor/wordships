@@ -226,6 +226,10 @@ export const GameProvider = ({ children }: { children: React.ReactNode; }) => {
       const opponentData =
         data.player1.id === player.id ? data.player2 : data.player1;
       if (opponentData?.id) setOpponent(opponentData);
+
+      if (data.winner) {
+        setWinner(data.winner);
+      }
     };
 
     fetchGameState();
