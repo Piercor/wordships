@@ -7,6 +7,7 @@ public class Game
   public Player? Player2;
   public bool BothReady => Player1?.IsReady == true && Player2?.IsReady == true;
   public Player? Turn;
+  public Player? Winner = null;
 
   public Game(Guid id)
   {

@@ -107,15 +107,24 @@ public static class Endpoints
       return Results.Ok(response);
     });
 
-    // Takes gameId, playerId (the player to guess the letter from) and a letter and makes a guess.
+    // Takes gameId, playerGuessingId (the player guessing), playerToGuessId (the player to guess the letter from) and a letter and makes a guess.
     // Returns hit or miss. If hit, the state of the letter would change from "Found = false" to "Found = true".
+    // Also checks if all the letters of a player have been found, and if so, set the guessing player as the winner 
+    // and returns "Winner: (winner id)"
     App.MapPost("/api/player/guess", (JsonElement bodyJson) =>
     {
-      var response = GameEngine.PlayerHasLetter(
-         Guid.Parse(bodyJson.GetProperty("gameId").GetString()!),
-         Guid.Parse(bodyJson.GetProperty("playerId").GetString()!),
-         char.Parse(bodyJson.GetProperty("letter").GetString()!)
-       );
+      Game game = GameEngine.Games[Guid.Parse(bodyJson.GetProperty("gameId").GetString()!)];
+      Guid playerGuessingId = Guid.Parse(bodyJson.GetProperty("playerGuessingId").GetString()!);
+      Guid playerToGuessId = Guid.Parse(bodyJson.GetProperty("playerToGuessId").GetString()!);
+      char letter = char.Parse(bodyJson.GetProperty("letter").GetString()!);
+
+      var response = GameEngine.PlayerHasLetter(game.Id, playerToGuessId, letter);
+
+      if (GameEngine.FoundAllWords(game.Id, playerToGuessId))
+      {
+        game.Winner = game.GetPlayer(playerGuessingId);
+        response = $"Winner: {game?.Winner?.Id}";
+      }
 
       return Results.Ok(response);
     });
