@@ -122,24 +122,37 @@ public static class Endpoints
     // Takes gameId, playerGuessingId (the player guessing), playerToGuessId (the player to guess the word from) and a word and makes a guess.
     // Returns true or false. If true, the state of all the letters of the word would change from "Found = false" to "Found = true".
     // If false, a penalty is applied to the guessing player and one of their letters (previously Found = false) becomes Found = true;
+    // With each guess the system checks if any player won (if oponent list of words is completely found).
+    // NOTE: guessing an already guessed word would result in a wrong guess and therefore a penalty.
     App.MapPost("/api/player/guess-word", (JsonElement bodyJson) =>
     {
-      Guid gameId = Guid.Parse(bodyJson.GetProperty("gameId").GetString()!);
+      Game? game = GameEngine.Games[Guid.Parse(bodyJson.GetProperty("gameId").GetString()!)];
       Guid playerGuessingId = Guid.Parse(bodyJson.GetProperty("playerGuessingId").GetString()!);
       Guid playerToGuessId = Guid.Parse(bodyJson.GetProperty("playerToGuessId").GetString()!);
       string word = bodyJson.GetProperty("word").GetString()!;
 
       string response = "";
-      if (GameEngine.PlayerHasWord(gameId, playerToGuessId, word))
+      if (GameEngine.PlayerHasWord(game.Id, playerToGuessId, word))
       {
-        response = "Word guessed correctly!";
+        if (GameEngine.FoundAllWords(game.Id, playerToGuessId))
+        {
+          game.Winner = game.GetPlayer(playerGuessingId);
+          response = $"Winner: {game?.Winner?.Id}";
+        }
+        else { response = "Word guessed correctly!"; }
       }
       else
       {
-        GameEngine.Penalty(gameId, playerGuessingId);
-        response = "Word guessed wrong!";
+        GameEngine.Penalty(game.Id, playerGuessingId);
+        if (GameEngine.FoundAllWords(game.Id, playerGuessingId))
+        {
+          game.Winner = game.GetPlayer(playerToGuessId);
+          response = $"Winner: {game?.Winner?.Id}";
+        }
+        else { response = "Word guessed wrong!"; }
       }
-      return Results.Ok(new { message = response });
+
+      return Results.Ok(response);
     });
   }
 }
