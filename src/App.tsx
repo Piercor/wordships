@@ -13,11 +13,11 @@ const AppContent = () => {
     return <RegisterPlayerPage />;
   }
 
+  if (winner) return <ResultPage />;
   if (!gameId || !opponent) return <CreateOrJoinPage />;
-
   if (!isReady) return <PlacementPage />;
   if (!bothReady) return <WaitingPage />;
-  if (winner) return <ResultPage />;
+
 
   return <GamePage />;
 };

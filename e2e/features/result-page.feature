@@ -1,0 +1,24 @@
+Feature: Result Page
+
+  Background:
+    Given I have registered as "Anna"
+
+  Scenario: Winner sees win message and winner name
+    Given I have completed a game as winner
+    Then I should see the heading "You won!"
+    And I should see the winner name "Anna"
+
+  Scenario: Loser sees loss message and winner name
+    Given I have completed a game as loser
+    Then I should see the heading "You lost!"
+    And I should see the winner name "Opponent"
+
+  Scenario: Refresh keeps result for winner
+    Given I have completed a game as winner
+    When I reload the page
+    Then I should see the heading "You won!"
+
+  Scenario: Refresh keeps result for loser
+    Given I have completed a game as loser
+    When I reload the page
+    Then I should see the heading "You lost!"
