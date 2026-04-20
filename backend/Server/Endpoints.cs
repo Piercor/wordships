@@ -109,5 +109,28 @@ public static class Endpoints
 
       return Results.Ok(response);
     });
+
+    // Takes gameId, playerGuessingId (the player guessing), playerToGuessId (the player to guess the word from) and a word and makes a guess.
+    // Returns true or false. If true, the state of all the letters of the word would change from "Found = false" to "Found = true".
+    // If false, a penalty is applied to the guessing player and one of their letters (previously Found = false) becomes Found = true;
+    App.MapPost("/api/player/guess-word", (JsonElement bodyJson) =>
+    {
+      Guid gameId = Guid.Parse(bodyJson.GetProperty("gameId").GetString()!);
+      Guid playerGuessingId = Guid.Parse(bodyJson.GetProperty("playerGuessingId").GetString()!);
+      Guid playerToGuessId = Guid.Parse(bodyJson.GetProperty("playerToGuessId").GetString()!);
+      string word = bodyJson.GetProperty("word").GetString()!;
+
+      string response = "";
+      if (GameEngine.PlayerHasWord(gameId, playerToGuessId, word))
+      {
+        response = "Word guessed correctly!";
+      }
+      else
+      {
+        GameEngine.Penalty(gameId, playerGuessingId);
+        response = "Word guessed wrong!";
+      }
+      return Results.Ok(new { message = response });
+    });
   }
 }
