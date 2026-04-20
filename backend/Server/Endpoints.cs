@@ -23,7 +23,12 @@ public static class Endpoints
           id = game?.Player2?.Id,
           name = game?.Player2?.Name
         },
-        turn = game?.Turn?.Id
+        turn = game?.Turn?.Id,
+        winner = game?.Winner == null ? null : new
+        {
+          id = game.Winner.Id,
+          name = game.Winner.Name
+        }
       };
 
       return Results.Ok(response);
