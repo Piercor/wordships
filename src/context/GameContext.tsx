@@ -21,11 +21,12 @@ interface GameContextInterface {
   setReady: (placements: Placement[]) => Promise<void>;
   guessLetter: (letter: string) => Promise<GuessResult>;
   turn: string | null;
+  winner: Player | null;
 }
 
 const GameContext = createContext<GameContextInterface | null>(null);
 
-export const GameProvider = ({ children }: { children: React.ReactNode }) => {
+export const GameProvider = ({ children }: { children: React.ReactNode; }) => {
   const [player, setPlayer] = useState<Player | null>(null);
   const [opponent, setOpponent] = useState<Player | null>(null);
   const [gameId, setGameId] = useState<string | null>(null);
@@ -36,6 +37,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const [isReady, setIsReady] = useState(false);
   const [bothReady, setBothReady] = useState(false);
   const [turn, setTurn] = useState<string | null>(null);
+  const [winner, setWinner] = useState<Player | null>(null);
 
   // Registrera spelare med namn
   const registerPlayer = (name: string) => {
@@ -299,6 +301,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
         setReady,
         guessLetter,
         turn,
+        winner,
       }}
     >
       {children}
