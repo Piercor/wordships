@@ -4,9 +4,10 @@ import CreateOrJoinPage from "./pages/CreateOrJoinPage";
 import WaitingPage from "./pages/WaitingPage";
 import PlacementPage from "./pages/PlacementPage";
 import GamePage from "./pages/GamePage";
+import ResultPage from "./pages/ResultPage";
 
 const AppContent = () => {
-  const { player, gameId, isReady, bothReady, opponent } = useGame();
+  const { player, gameId, isReady, bothReady, opponent, winner } = useGame();
 
   if (!player) {
     return <RegisterPlayerPage />;
@@ -16,6 +17,7 @@ const AppContent = () => {
 
   if (!isReady) return <PlacementPage />;
   if (!bothReady) return <WaitingPage />;
+  if (winner) return <ResultPage />;
 
   return <GamePage />;
 };
