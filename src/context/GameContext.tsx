@@ -159,10 +159,6 @@ export const GameProvider = ({ children }: { children: React.ReactNode; }) => {
     const gameData = await gameResult.json();
     setTurn(gameData.turn);
 
-    if (gameData.winner) {
-      setWinner(gameData.winner);
-    }
-
     return data;
   };
 
@@ -223,7 +219,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode; }) => {
     if (bothReady) sessionStorage.setItem("bothReady", "true");
   }, [bothReady]);
 
-  // Hämta spelstate – opponent och turn
+  // Hämta spelstate – opponent, turn och eventuell winner
   useEffect(() => {
     if (!gameId || !player?.id) return;
 
@@ -236,6 +232,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode; }) => {
         data.player1.id === player.id ? data.player2 : data.player1;
       if (opponentData?.id) setOpponent(opponentData);
 
+      // Om backend skickar en winner sparar vi den och då kan appen visa ResultPage
       if (data.winner) {
         setWinner(data.winner);
       }
