@@ -144,6 +144,9 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ gameId, playerId: opponent?.id, letter }),
     });
+
+    if (!result.ok) throw new Error("Failed to guess letter");
+
     const data = await result.json();
     const gameResult = await fetch(`/api/game/${gameId}`);
     const gameData = await gameResult.json();
@@ -209,11 +212,11 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     if (bothReady) sessionStorage.setItem("bothReady", "true");
   }, [bothReady]);
 
-  // Vänta på att motståndaren ansluter
+  // Hämta spelstate – opponent och turn
   useEffect(() => {
-    if (!gameId || !player?.id || opponent) return;
+    if (!gameId || !player?.id) return;
 
-    const fetchOpponent = async () => {
+    const fetchGameState = async () => {
       const result = await fetch(`/api/game/${gameId}`);
       const data = await result.json();
 
@@ -223,25 +226,10 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
       if (opponentData?.id) setOpponent(opponentData);
     };
 
-    fetchOpponent();
-    const interval = setInterval(fetchOpponent, 3000);
+    fetchGameState();
+    const interval = setInterval(fetchGameState, 3000);
     return () => clearInterval(interval);
-  }, [gameId, player?.id, opponent]);
-
-  // Uppdatera vems tur det är
-  useEffect(() => {
-    if (!gameId || !bothReady) return;
-
-    const fetchTurn = async () => {
-      const result = await fetch(`/api/game/${gameId}`);
-      const data = await result.json();
-      setTurn(data.turn);
-    };
-
-    fetchTurn();
-    const interval = setInterval(fetchTurn, 3000);
-    return () => clearInterval(interval);
-  }, [gameId, bothReady]);
+  }, [gameId, player?.id]);
 
   // Vänta på att båda spelarna är redo
   useEffect(() => {
