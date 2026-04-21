@@ -55,8 +55,8 @@ const RegisterPlayerPage = () => {
 
         <div className="info-box">
           <p>
-            A unique player ID will be created for you. You'll use this to join
-            games and keep track of your progress across sessions.
+            A unique player ID will be created for you when you create or join a
+            game.
           </p>
         </div>
       </div>
