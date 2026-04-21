@@ -39,7 +39,7 @@ const getCellClass = (cell: Cell, isOpponent: boolean): string => {
 
 export default function Grid({ grid, isOpponent }: GameGridProps) {
   return (
-    <div className="grid">
+    <div className={`grid${!isOpponent ? " own" : ""}`}>
       {grid.map((row, rowIndex) =>
         row.map((cell, colIndex) => (
           <div

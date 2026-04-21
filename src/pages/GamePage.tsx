@@ -82,15 +82,18 @@ export default function GamePage() {
       <div className="card">
         <div className="game-page">
           <div className="grids">
-            <div data-testid="player-grid">
-              <h2>My Board</h2>
-              <p className="board-subtitle">{player?.name}</p>
-              <Grid grid={playerGrid} isOpponent={false} />
-            </div>
             <div data-testid="opponent-grid">
               <h2>Opponent's Board</h2>
               <p className="board-subtitle">{opponent?.name}</p>
               <Grid grid={opponentGrid} isOpponent={true} />
+            </div>
+            <div>
+
+              <div data-testid="player-grid">
+                <h2>My Board</h2>
+                <p className="board-subtitle">{player?.name}</p>
+                <Grid grid={playerGrid} isOpponent={false} />
+              </div>
             </div>
           </div>
 

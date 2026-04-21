@@ -8,6 +8,10 @@
     grid-template-columns: repeat(10, 40px);
     width: auto;
   }
+
+  &.own {
+    grid-template-columns: repeat(10, 20px);
+  }
 }
 
 .cell {

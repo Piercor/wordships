@@ -25,10 +25,11 @@
   }
 }
 
-.grids > div {
+.grids>div {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-end;
 
   h2 {
     text-align: center;
