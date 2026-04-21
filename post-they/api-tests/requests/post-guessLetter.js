@@ -26,7 +26,7 @@ export function postResponse() {
 
   const json = pm.response.json();
   pm.test('Response has Hit, Miss or Winner', () =>
-    pm.expect(json).to.be.oneOf(['Hit', 'Miss', `Winner: ${pm.environment.get("player1Id")}`, `Winner: ${pm.environment.get("player2Id")}`])
+    pm.expect(json).to.be.oneOf(['Hit', 'Miss', `Winner: ${pm.environment.get("player1Id")}`])
   );
 
   let index = parseInt(pm.environment.get('guessLetterIndex') || '0', 10) + 1;
