@@ -13,7 +13,8 @@ export function postResponse() {
   pm.test('Status code is 200', () => pm.response.to.have.status(200));
 
   const json = pm.response.json();
-  pm.test('Response has guessed correctly or wrong', () =>
-    pm.expect(json.message).to.be.oneOf(['Word guessed correctly!', 'Word guessed wrong!'])
+  pm.test('Response has guessed correctly or wrong, or winner ', () =>
+    pm.expect(json).to.be.oneOf(['Word guessed correctly!', 'Word guessed wrong!',
+      `Winner: ${pm.environment.get("player1Id")}`, `Winner: ${pm.environment.get("player2Id")}`])
   );
 }
