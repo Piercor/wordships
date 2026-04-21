@@ -145,6 +145,7 @@ jobs:
         run: npm ci
 
       - name: Install post-they
+        if: ${{ matrix.suite == 'api' }}
         run: cd post-they & npm ci
 
       - name: Build frontend
@@ -166,6 +167,7 @@ jobs:
           sleep 2
           done
           echo "Server started"
+          ls -a
           npm run test:api
 
       - name: Run E2E tests
