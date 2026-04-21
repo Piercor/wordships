@@ -1,0 +1,13 @@
+.result-page {
+  display: flex;
+  flex-direction: column;
+
+  .winner-name {
+    align-self: center;
+    padding-bottom: 1rem;
+  }
+
+  .heading {
+    color: white;
+  }
+}

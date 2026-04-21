@@ -22,6 +22,7 @@ interface GameContextInterface {
   guessLetter: (letter: string) => Promise<GuessResult>;
   turn: string | null;
   winner: Player | null;
+  resetGame: () => void;
 }
 
 const GameContext = createContext<GameContextInterface | null>(null);
@@ -158,11 +159,29 @@ export const GameProvider = ({ children }: { children: React.ReactNode; }) => {
     const gameResult = await fetch(`/api/game/${gameId}`);
     const gameData = await gameResult.json();
     setTurn(gameData.turn);
+
     if (data.winner) {
       setWinner(data.winner);
     }
 
     return data;
+  };
+
+  const resetGame = () => {
+    setOpponent(null);
+    setPlayerWords([]);
+    setOpponentWords([]);
+    setIsReady(false);
+    setBothReady(false);
+    setTurn(null);
+    setWinner(null);
+    setGameId(null);
+    setError(null);
+
+    sessionStorage.removeItem("bothReady");
+    sessionStorage.removeItem("guessedLetters");
+    sessionStorage.removeItem("game");
+    sessionStorage.removeItem("isReady");
   };
 
   // Ladda in sparad state från sessionStorage
@@ -315,6 +334,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode; }) => {
         guessLetter,
         turn,
         winner,
+        resetGame,
       }}
     >
       {children}
