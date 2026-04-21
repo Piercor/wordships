@@ -14,15 +14,20 @@ Given("I have registered as {string}", async ({ page }, name) => {
   await expect(page.getByTestId("create-page")).toBeVisible();
 });
 
-When('I click Create Game', async ({ page }) => {
-  await page.getByTestId("create-game-btn").click();
-});
-
-
 When("I place all my words and click ready", async ({ page }) => {
   await page.route("*/**/api/player/place", async (route) => {
     await route.fulfill({ json: { ready: true } });
   });
+  const wordButtons = page.getByTestId("word-button");
+
+  await wordButtons.first().click();
+  await page.locator(".cell").nth(0).click();
+
+  await wordButtons.nth(1).click();
+  await page.locator(".cell").nth(10).click(); 
+
+  await expect(page.getByTestId("ready-btn")).toBeEnabled();
+  await page.getByTestId("ready-btn").click();
 });
 
 When("I click Join Game successfully", async ({ page }) => {
@@ -96,4 +101,5 @@ Given("I have created a game", async ({ page }) => {
 
   await page.getByTestId("create-game-btn").click();
   await page.getByTestId("refresh-btn").click();
+  await expect(page.getByTestId("placement-grid")).toBeVisible(); 
 });

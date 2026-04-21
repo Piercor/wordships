@@ -4,7 +4,7 @@ Feature: Create or Join Game
     Given I have registered as "Anna"
 
   Scenario: Create new game
-    When I click Create Game
+    When I click "Create Game"
     Then I should see a Game ID to share with my opponent
 
   Scenario: Switch to join view
