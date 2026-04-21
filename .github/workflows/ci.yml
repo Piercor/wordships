@@ -62,7 +62,10 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install frontend/system test dependencies
-        run: npm i
+        run: npm ci
+
+      - name: Install post-they
+        run: cd post-they & npm ci
 
       - name: Scan npm dependencies
         run: npm audit --audit-level=high
@@ -104,7 +107,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [unit, e2e]
+        suite: [unit, api, e2e]
 
     steps:
       - uses: actions/checkout@v4
@@ -141,6 +144,9 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
+      - name: Install post-they
+        run: cd post-they & npm ci
+
       - name: Build frontend
         run: npm run build 
 
@@ -152,13 +158,13 @@ jobs:
         if: ${{ matrix.suite == 'unit' }}
         run: dotnet test backend/Wordships.slnx --logger "trx;LogFileName=unit-tests.trx" --results-directory TestResults
 
-      # - name: Run API tests
-      #   if: ${{ matrix.suite == 'api' }}
-      #   run: |
-      #     npm run backend &
-      #     npx wait-on http://localhost:5001
-      #     echo "Server started"
-      #     npm run test:api
+      - name: Run API tests
+        if: ${{ matrix.suite == 'api' }}
+        run: |
+          npm run backend &
+          npx wait-on http://localhost:5001
+          echo "Server started"
+          npm run test:api
 
       - name: Run E2E tests
         if: ${{ matrix.suite == 'e2e' }}
