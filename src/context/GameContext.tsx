@@ -142,7 +142,12 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     const result = await fetch("/api/player/guess", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ gameId, playerId: opponent?.id, letter }),
+      body: JSON.stringify({
+        gameId,
+        playerGuessingId: player?.id,
+        playerToGuessId: opponent?.id,
+        letter,
+      }),
     });
 
     if (!result.ok) throw new Error("Failed to guess letter");
