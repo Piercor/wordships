@@ -37,7 +37,9 @@ public class Game
     public static List<Word> GetWords()
     {
         Dictionary<int, List<string>> words = new();
-        string[] wordsCsv = File.ReadAllLines(Path.Combine(AppContext.BaseDirectory, "words.csv"));
+        string[] wordsCsv = File.ReadAllLines(
+            Path.Combine(AppContext.BaseDirectory, "src", "words.csv")
+        );
         foreach (string line in wordsCsv)
         {
             string[] wordsSplitData = line.Split(",");
