@@ -162,7 +162,7 @@ jobs:
         if: ${{ matrix.suite == 'api' }}
         run: |
           npm run backend &
-          npx wait-on http://localhost:5001
+          npx wait-on http://localhost:5001/api/health
           echo "Server started"
           npm run test:api
 
@@ -170,7 +170,7 @@ jobs:
         if: ${{ matrix.suite == 'e2e' }}
         run: |
           npm run backend &
-          npx wait-on http://localhost:5001
+          npx wait-on http://localhost:5001/api/health
           echo "Server started"
           npm run test:e2e
 
