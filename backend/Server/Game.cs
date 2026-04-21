@@ -6,6 +6,7 @@ public class Game
   public Player? Player1;
   public Player? Player2;
   public Player? Turn;
+  public Player? Winner = null;
   public Game(Guid id)
   {
     Id = id;
