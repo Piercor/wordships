@@ -24,3 +24,13 @@ Feature: Result Page
     Given I have completed a game as loser
     When I reload the page
     Then I should see the heading "You lost!"
+
+  Scenario: Winner can play again
+    Given I have completed a game as winner
+    When I click "Play again"
+    Then I should see the create page
+
+  Scenario: Loser can play again
+    Given I have completed a game as loser
+    When I click "Play again"
+    Then I should see the create page

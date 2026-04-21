@@ -18,27 +18,6 @@ Given("I have completed a game as winner", async ({ page }) => {
 });
 
 Given("I have completed a game as loser", async ({ page }) => {
-  await page.route("*/**/api/game/create", async (route) => {
-    await route.fulfill({
-      json: {
-        gameId: "test-game-123",
-        player: { id: "player-1", name: "Anna" }
-      }
-    });
-  });
-
-  await page.route("*/**/api/player/player-1", async (route) => {
-    await route.fulfill({
-      json: {
-        player: {
-          id: "player-1",
-          name: "Anna",
-          wordList: []
-        }
-      }
-    });
-  });
-
   await page.route("*/**/api/game/test-game-123", async (route) => {
     await route.fulfill({
       json: {
@@ -65,4 +44,8 @@ Then("I should see the heading {string}", async ({ page }, text) => {
 
 Then("I should see the winner name {string}", async ({ page }, name) => {
   await expect(page.locator(".result-page")).toContainText(name);
+});
+
+Then("I should see the create page", async ({ page }) => {
+  await page.getByTestId("create-page").click();
 });
