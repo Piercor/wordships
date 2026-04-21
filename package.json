@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test:xunit": "dotnet test backend/Wordships.slnx",
-    "test:api": "cd post-they && post-they run api-tests",
+    "test:api": "cd post-they && npm run test:api",
     "test:e2e": "npx bddgen && npx playwright test",
     "test": "npm run test:xunit && npm run test:api && npm run test:e2e",
     "install -all": "npm install && cd post-they && npm install"
