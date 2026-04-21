@@ -158,6 +158,9 @@ export const GameProvider = ({ children }: { children: React.ReactNode; }) => {
     const gameResult = await fetch(`/api/game/${gameId}`);
     const gameData = await gameResult.json();
     setTurn(gameData.turn);
+    if (data.winner) {
+      setWinner(data.winner);
+    }
 
     return data;
   };
