@@ -29,3 +29,10 @@ Feature: Place words
     When I click on the word "DOG"
     And I try to place the word on the same cell
     Then "DOG" should still be in the word list
+
+  Scenario: Ready button is enabled after all words are placed
+    When I click on the word "CAT"
+    And I place the word on the grid
+    And I click on the word "DOG"
+    And I place the word on a different row
+    Then the Ready button should be enabled

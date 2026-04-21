@@ -42,3 +42,11 @@ When("I try to place the word on the same cell", async ({ page }) => {
 Then("{string} should still be in the word list", async ({ page }, word) => {
   await expect(page.getByTestId("word-button").getByText(word)).toBeEnabled();
 });
+
+When("I place the word on a different row", async ({ page }) => {
+    await page.locator(".cell").nth(10).click();
+});
+
+Then("the Ready button should be enabled", async ({ page }) => {
+  await expect(page.getByTestId("ready-btn")).toBeEnabled();
+});
