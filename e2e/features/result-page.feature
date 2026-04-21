@@ -2,6 +2,8 @@ Feature: Result Page
 
   Background:
     Given I have registered as "Anna"
+    And I have created a game
+    And I place all my words and click ready
 
   Scenario: Winner sees win message and winner name
     Given I have completed a game as winner

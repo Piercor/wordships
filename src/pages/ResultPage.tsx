@@ -12,7 +12,7 @@ export default function ResultPage() {
           <p className="winner-name">
             Winner: {winner?.name}
           </p>
-          <button className="button" onClick={resetGame}>
+          <button data-testid="reset-game-btn" className="button" onClick={resetGame}>
             Play again
           </button>
         </div>

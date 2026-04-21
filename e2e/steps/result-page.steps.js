@@ -4,27 +4,6 @@ import { createBdd } from 'playwright-bdd';
 const { Given, When, Then } = createBdd();
 
 Given("I have completed a game as winner", async ({ page }) => {
-  await page.route("*/**/api/game/create", async (route) => {
-    await route.fulfill({
-      json: {
-        gameId: "test-game-123",
-        player: { id: "player-1", name: "Anna" }
-      }
-    });
-  });
-
-  await page.route("*/**/api/player/player-1", async (route) => {
-    await route.fulfill({
-      json: {
-        player: {
-          id: "player-1",
-          name: "Anna",
-          wordList: []
-        }
-      }
-    });
-  });
-
   await page.route("*/**/api/game/test-game-123", async (route) => {
     await route.fulfill({
       json: {
@@ -36,8 +15,6 @@ Given("I have completed a game as winner", async ({ page }) => {
     });
   });
 
-  await page.getByTestId("create-game-btn").click();
-  await page.getByTestId("refresh-btn").click();
 });
 
 Given("I have completed a game as loser", async ({ page }) => {
@@ -73,6 +50,7 @@ Given("I have completed a game as loser", async ({ page }) => {
     });
   });
 
+  await page.getByTestId("reset-game-btn").click();
   await page.getByTestId("create-game-btn").click();
   await page.getByTestId("refresh-btn").click();
 });

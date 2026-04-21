@@ -19,11 +19,11 @@ When('I click Create Game', async ({ page }) => {
 });
 
 
-// When("I place all my words and click ready", async ({ page }) => {
-//   await page.route("*/**/api/player/place", async (route) => {
-//     await route.fulfill({ json: { ready: true } });
-//   });
-// });
+When("I place all my words and click ready", async ({ page }) => {
+  await page.route("*/**/api/player/place", async (route) => {
+    await route.fulfill({ json: { ready: true } });
+  });
+});
 
 When("I click Join Game successfully", async ({ page }) => {
   await page.route("*/**/api/game/join", async (route) => {
