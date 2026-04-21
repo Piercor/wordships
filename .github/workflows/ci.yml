@@ -62,10 +62,10 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install frontend/system test dependencies
-        run: npm i
+        run: npm ci
 
       - name: Install post-they
-        run: cd post-they & npm ci
+        run: cd post-they && npm ci
 
       - name: Scan npm dependencies
         run: npm audit --audit-level=high
@@ -146,7 +146,7 @@ jobs:
 
       - name: Install post-they
         if: ${{ matrix.suite == 'api' }}
-        run: cd post-they & npm ci
+        run: cd post-they && npm ci
 
       - name: Build frontend
         run: npm run build 
