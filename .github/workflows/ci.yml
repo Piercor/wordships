@@ -62,7 +62,7 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install frontend/system test dependencies
-        run: npm ci
+        run: npm i
 
       - name: Install post-they
         run: cd post-they & npm ci
