@@ -4,7 +4,9 @@ import getGameInfo from "./requests/get-gameInfo.js";
 import getPlayerInfo from "./requests/get-playerInfo.js";
 import postGuessLetter from "./requests/post-guessLetter.js";
 import postGuessWord from "./requests/post-guessWord.js";
-
+import postPlaceWords from "./requests/post-placeWords.js";
+import getGameReady from "./requests/get-gameReady.js";
+import postPlaceWordsInvalid from "./requests/post-placeWords-invalid.js";
 
 export const name = 'Wordships';
 
@@ -18,5 +20,8 @@ export const order = [
   getGameInfo,
   getPlayerInfo,
   postGuessLetter,
-  postGuessWord
+  postGuessWord,
+  postPlaceWords,
+  postPlaceWordsInvalid,
+  getGameReady
 ];

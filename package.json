@@ -14,7 +14,7 @@
     "test:api": "cd post-they && npm run test:api",
     "test:e2e": "npx bddgen && npx playwright test",
     "test": "npm run test:xunit && npm run test:api && npm run test:e2e",
-    "install -all": "npm install && cd post-they && npm install"
+    "install-all": "npm install && cd post-they && npm install"
   },
   "dependencies": {
     "react": "^19.2.4",

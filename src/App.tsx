@@ -1,20 +1,25 @@
 import RegisterPlayerPage from "./pages/RegisterPlayerPage";
 import { GameProvider, useGame } from "./context/GameContext";
 import CreateOrJoinPage from "./pages/CreateOrJoinPage";
+import WaitingPage from "./pages/WaitingPage";
+import PlacementPage from "./pages/PlacementPage";
+import GamePage from "./pages/GamePage";
+import ResultPage from "./pages/ResultPage";
 
 const AppContent = () => {
-  const { player, gameId } = useGame();
+  const { player, gameId, isReady, bothReady, opponent, winner } = useGame();
 
   if (!player) {
     return <RegisterPlayerPage />;
   }
 
-  if (!gameId) {
-    return <CreateOrJoinPage />;
-  }
+  if (winner) return <ResultPage />;
+  if (!gameId || !opponent) return <CreateOrJoinPage />;
+  if (!isReady) return <PlacementPage />;
+  if (!bothReady) return <WaitingPage />;
 
-  //TODO: ska returnera sidan för själva spelet sen
-  return <div>Väntar på motspelare... (Game ID: {gameId})</div>;
+
+  return <GamePage />;
 };
 
 export default function App() {
