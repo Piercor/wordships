@@ -168,35 +168,36 @@ public static class Endpoints
       }
 
       return Results.Ok(response);
+    });
 
-      App.MapPost("/api/player/place", (JsonElement bodyJson) =>
+    App.MapPost("/api/player/place", (JsonElement bodyJson) =>
+    {
+      Guid playerId = Guid.Parse(bodyJson.GetProperty("playerId").GetString()!);
+
+      Player? player = GameEngine.GetPlayer(playerId);
+      if (player == null) return Results.NotFound();
+
+      foreach (var placement in bodyJson.GetProperty("placements").EnumerateArray())
       {
-        Guid playerId = Guid.Parse(bodyJson.GetProperty("playerId").GetString()!);
+        string wordName = placement.GetProperty("wordName").GetString()!;
+        int row = placement.GetProperty("row").GetInt32();
+        int col = placement.GetProperty("col").GetInt32();
 
-        Player? player = GameEngine.GetPlayer(playerId);
-        if (player == null) return Results.NotFound();
-
-        foreach (var placement in bodyJson.GetProperty("placements").EnumerateArray())
+        foreach (Word word in player.WordList)
         {
-          string wordName = placement.GetProperty("wordName").GetString()!;
-          int row = placement.GetProperty("row").GetInt32();
-          int col = placement.GetProperty("col").GetInt32();
-
-          foreach (Word word in player.WordList)
+          if (word.Name == wordName)
           {
-            if (word.Name == wordName)
+            for (int i = 0; i < word.LetterList.Count; i++)
             {
-              for (int i = 0; i < word.LetterList.Count; i++)
-              {
-                word.LetterList[i].Row = row;
-                word.LetterList[i].Col = col + i;
-              }
+              word.LetterList[i].Row = row;
+              word.LetterList[i].Col = col + i;
             }
           }
         }
+      }
 
-        player.IsReady = true;
-        return Results.Ok(new { ready = player.IsReady });
-      });
-    }
+      player.IsReady = true;
+      return Results.Ok(new { ready = player.IsReady });
+    });
+  }
 }
