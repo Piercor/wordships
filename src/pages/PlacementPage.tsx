@@ -1,4 +1,4 @@
-import { use, useState } from "react";
+import { useState } from "react";
 import { useGame } from "../context/GameContext";
 import type { Word } from "../interface/Word";
 import type { Placement } from "../interface/Placement";
@@ -43,43 +43,83 @@ const PlacementPage = () => {
     row: number,
     col: number,
   ): boolean => {
+    const length = word.length;
+
     if (horizontal) {
-      const start = col;
-      const end = col + word.length - 1;
+      const endCol = col + length - 1;
 
       // Kontrollera att ordet ryms på raden
-      if (end >= GRID_SIZE) return false;
+      if (endCol >= GRID_SIZE) return false;
 
-      // Kontrollera att cellerna under ordet är lediga
-      for (let i = 0; i < word.length; i++) {
+      // Kontrollera att alla celler för ordet är lediga
+      for (let i = 0; i < length; i++) {
         if (grid[row][col + i].letter !== null) return false;
       }
 
-      // Kontrollera att det finns en tom cell till vänster om ordet
-      if (start > 0 && grid[row][start - 1].letter !== null) return false;
-
-      // Kontrollera att det finns en tom cell till höger om ordet
-      if (end < GRID_SIZE - 1 && grid[row][end + 1].letter !== null) return false;
-
-      return true;
-    }
-    else {
-      const start = row;
-      const end = row + word.length - 1;
-
-      // Kontrollera att ordet ryms på raden
-      if (end >= GRID_SIZE) return false;
-
-      // Kontrollera att cellerna under ordet är lediga
-      for (let i = 0; i < word.length; i++) {
-        if (grid[col][row + i].letter !== null) return false;
+      // Kontrollera att celler ovanför och nedanför varje bokstav är lediga (med boundary checks)
+      for (let i = 0; i < length; i++) {
+        const currentCol = col + i;
+        if (row > 0 && grid[row - 1][currentCol].letter !== null) return false; // Above
+        if (row < GRID_SIZE - 1 && grid[row + 1][currentCol].letter !== null) return false; // Below
       }
 
-      // Kontrollera att det finns en tom cell till vänster om ordet
-      if (start > 0 && grid[row][start - 1].letter !== null) return false;
+      // Kontrollera att det finns en tom cell till vänster om ordet (om möjligt)
+      if (col > 0 && grid[row][col - 1].letter !== null) return false;
 
-      // Kontrollera att det finns en tom cell till höger om ordet
-      if (end < GRID_SIZE - 1 && grid[row][end + 1].letter !== null) return false;
+      // Kontrollera att det finns en tom cell till höger om ordet (om möjligt)
+      if (endCol < GRID_SIZE - 1 && grid[row][endCol + 1].letter !== null) return false;
+
+      // NY: Förhindra diagonal adjacency vid första och sista bokstaven
+      // Första bokstaven (row, col)
+      if (row > 0 && col > 0 && grid[row - 1][col - 1].letter !== null) return false; // Top-left
+      if (row > 0 && col < GRID_SIZE - 1 && grid[row - 1][col + 1].letter !== null) return false; // Top-right
+      if (row < GRID_SIZE - 1 && col > 0 && grid[row + 1][col - 1].letter !== null) return false; // Bottom-left
+      if (row < GRID_SIZE - 1 && col < GRID_SIZE - 1 && grid[row + 1][col + 1].letter !== null) return false; // Bottom-right
+
+      // Sista bokstaven (row, endCol)
+      if (row > 0 && endCol > 0 && grid[row - 1][endCol - 1].letter !== null) return false; // Top-left
+      if (row > 0 && endCol < GRID_SIZE - 1 && grid[row - 1][endCol + 1].letter !== null) return false; // Top-right
+      if (row < GRID_SIZE - 1 && endCol > 0 && grid[row + 1][endCol - 1].letter !== null) return false; // Bottom-left
+      if (row < GRID_SIZE - 1 && endCol < GRID_SIZE - 1 && grid[row + 1][endCol + 1].letter !== null) return false; // Bottom-right
+
+      return true;
+    } else {
+      // Vertical placement
+      const endRow = row + length - 1;
+
+      // Kontrollera att ordet ryms på kolumnen
+      if (endRow >= GRID_SIZE) return false;
+
+      // Kontrollera att alla celler för ordet är lediga
+      for (let i = 0; i < length; i++) {
+        if (grid[row + i][col].letter !== null) return false;
+      }
+
+      // Kontrollera att celler till vänster och höger om varje bokstav är lediga (med boundary checks)
+      for (let i = 0; i < length; i++) {
+        const currentRow = row + i;
+        if (col > 0 && grid[currentRow][col - 1].letter !== null) return false; // Left
+        if (col < GRID_SIZE - 1 && grid[currentRow][col + 1].letter !== null) return false; // Right
+      }
+
+      // Kontrollera att det finns en tom cell ovanför ordet (om möjligt)
+      if (row > 0 && grid[row - 1][col].letter !== null) return false;
+
+      // Kontrollera att det finns en tom cell nedanför ordet (om möjligt)
+      if (endRow < GRID_SIZE - 1 && grid[endRow + 1][col].letter !== null) return false;
+
+      // NY: Förhindra diagonal adjacency vid första och sista bokstaven
+      // Första bokstaven (row, col)
+      if (row > 0 && col > 0 && grid[row - 1][col - 1].letter !== null) return false; // Top-left
+      if (row > 0 && col < GRID_SIZE - 1 && grid[row - 1][col + 1].letter !== null) return false; // Top-right
+      if (row < GRID_SIZE - 1 && col > 0 && grid[row + 1][col - 1].letter !== null) return false; // Bottom-left
+      if (row < GRID_SIZE - 1 && col < GRID_SIZE - 1 && grid[row + 1][col + 1].letter !== null) return false; // Bottom-right
+
+      // Sista bokstaven (endRow, col)
+      if (endRow > 0 && col > 0 && grid[endRow - 1][col - 1].letter !== null) return false; // Top-left
+      if (endRow > 0 && col < GRID_SIZE - 1 && grid[endRow - 1][col + 1].letter !== null) return false; // Top-right
+      if (endRow < GRID_SIZE - 1 && col > 0 && grid[endRow + 1][col - 1].letter !== null) return false; // Bottom-left
+      if (endRow < GRID_SIZE - 1 && col < GRID_SIZE - 1 && grid[endRow + 1][col + 1].letter !== null) return false; // Bottom-right
 
       return true;
     }
@@ -89,14 +129,22 @@ const PlacementPage = () => {
     if (!selectedWord) return;
     if (!canPlace(grid, selectedWord.name, row, col)) return;
 
-    // Kopiera grid och placera ut bokstäverna
     const newGrid = grid.map((r) => [...r]);
+    // Kopiera grid och placera ut bokstäverna
     for (let i = 0; i < selectedWord.name.length; i++) {
-      newGrid[row][col + i] = {
-        letter: selectedWord.name[i],
-        wordName: selectedWord.name,
-        found: false,
-      };
+      if (horizontal) {
+        newGrid[row][col + i] = {
+          letter: selectedWord.name[i],
+          wordName: selectedWord.name,
+          found: false,
+        };
+      } else {
+        newGrid[row + i][col] = {
+          letter: selectedWord.name[i],
+          wordName: selectedWord.name,
+          found: false,
+        };
+      }
     }
 
     setGrid(newGrid);
