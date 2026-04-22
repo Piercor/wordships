@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { use, useState } from "react";
 import { useGame } from "../context/GameContext";
 import type { Word } from "../interface/Word";
 import type { Placement } from "../interface/Placement";
@@ -13,6 +13,7 @@ const PlacementPage = () => {
   const [grid, setGrid] = useState<Square>(createEmptyGrid);
   const [hoverCol, setHoverCol] = useState<number | null>(null);
   const [hoverRow, setHoverRow] = useState<number | null>(null);
+  const [horizontal, setHorizontal] = useState<boolean>(true);
 
   const placedWords = placements.map((p) => p.wordName);
   const wordsLeft = playerWords.filter(
@@ -22,14 +23,19 @@ const PlacementPage = () => {
 
   //Kollar om en cell ska markeras när man hovrar;
   const getPreviewState = (rowIndex: number, colIndex: number) => {
-    if (!selectedWord || hoverCol === null || hoverRow !== rowIndex)
+    if (!selectedWord || hoverCol === null || hoverRow === null)
       return null;
-    if (colIndex < hoverCol || colIndex >= hoverCol + selectedWord.name.length)
-      return null;
-    const wordFits = canPlace(grid, selectedWord.name, hoverRow, hoverCol);
-    return wordFits ? "valid" : "invalid";
+    const length = selectedWord.name.length;
+    const inPlace = horizontal ? rowIndex === hoverRow && colIndex >= hoverCol && colIndex < hoverCol + length
+      : colIndex === hoverCol && rowIndex >= hoverRow && rowIndex < hoverRow + length;
+    if (!inPlace) return null;
+
+    return canPlace(grid, selectedWord.name, hoverRow, hoverCol) ? "valid" : "invalid";
+    // return wordFits ? "valid" : "invalid";    
   };
 
+  /* if (horizontal) {
+  }; */
   // Kollar om ett ord kan placeras på en given rad och kolumn
   const canPlace = (
     grid: Square,
@@ -37,24 +43,46 @@ const PlacementPage = () => {
     row: number,
     col: number,
   ): boolean => {
-    const start = col;
-    const end = col + word.length - 1;
+    if (horizontal) {
+      const start = col;
+      const end = col + word.length - 1;
 
-    // Kontrollera att ordet ryms på raden
-    if (end >= GRID_SIZE) return false;
+      // Kontrollera att ordet ryms på raden
+      if (end >= GRID_SIZE) return false;
 
-    // Kontrollera att cellerna under ordet är lediga
-    for (let i = 0; i < word.length; i++) {
-      if (grid[row][col + i].letter !== null) return false;
+      // Kontrollera att cellerna under ordet är lediga
+      for (let i = 0; i < word.length; i++) {
+        if (grid[row][col + i].letter !== null) return false;
+      }
+
+      // Kontrollera att det finns en tom cell till vänster om ordet
+      if (start > 0 && grid[row][start - 1].letter !== null) return false;
+
+      // Kontrollera att det finns en tom cell till höger om ordet
+      if (end < GRID_SIZE - 1 && grid[row][end + 1].letter !== null) return false;
+
+      return true;
     }
+    else {
+      const start = row;
+      const end = row + word.length - 1;
 
-    // Kontrollera att det finns en tom cell till vänster om ordet
-    if (start > 0 && grid[row][start - 1].letter !== null) return false;
+      // Kontrollera att ordet ryms på raden
+      if (end >= GRID_SIZE) return false;
 
-    // Kontrollera att det finns en tom cell till höger om ordet
-    if (end < GRID_SIZE - 1 && grid[row][end + 1].letter !== null) return false;
+      // Kontrollera att cellerna under ordet är lediga
+      for (let i = 0; i < word.length; i++) {
+        if (grid[col][row + i].letter !== null) return false;
+      }
 
-    return true;
+      // Kontrollera att det finns en tom cell till vänster om ordet
+      if (start > 0 && grid[row][start - 1].letter !== null) return false;
+
+      // Kontrollera att det finns en tom cell till höger om ordet
+      if (end < GRID_SIZE - 1 && grid[row][end + 1].letter !== null) return false;
+
+      return true;
+    }
   };
 
   const handleCellClick = (row: number, col: number) => {
@@ -108,6 +136,8 @@ const PlacementPage = () => {
             {selectedWord && (
               <>
                 Place word: <strong>{selectedWord.name.toUpperCase()}</strong>
+                <button className="hv-btn" onClick={() => horizontal ? setHorizontal(false) : setHorizontal(true)}>
+                  {horizontal ? '➡' : '⬇'}</button>
               </>
             )}
           </p>
@@ -120,8 +150,8 @@ const PlacementPage = () => {
 
                 // Räkna ut vilken bokstav som ska visas när man hovrar i cellen
                 const previewLetter =
-                  previewState === "valid" && hoverCol !== null
-                    ? selectedWord!.name[colIndex - hoverCol].toUpperCase()
+                  previewState === "valid" && hoverCol !== null && hoverRow !== null
+                    ? (horizontal ? selectedWord!.name[colIndex - hoverCol].toUpperCase() : selectedWord!.name[rowIndex - hoverRow].toUpperCase())
                     : null;
                 return (
                   <div
