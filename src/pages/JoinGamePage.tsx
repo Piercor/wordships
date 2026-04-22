@@ -37,7 +37,12 @@ const JoinGamePage = () => {
           the game.
         </p>
 
-        <button onClick={() => setGameId(inputGameId)}>Enter Game</button>
+        <button
+          data-testid="enter-game-btn"
+          onClick={() => setGameId(inputGameId)}
+        >
+          Enter Game
+        </button>
       </div>
     );
   }

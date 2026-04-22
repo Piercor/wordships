@@ -39,9 +39,9 @@ const CreateGamePage = () => {
         <div className="info-box">
           <p>Waiting for your opponent to join...</p>
           <button
+            data-testid="refresh-btn"
             onClick={() => {
               setGameId(gameCreated.gameId);
-              window.location.reload();
             }}
           >
             Refresh to see if they've joined

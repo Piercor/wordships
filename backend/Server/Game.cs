@@ -7,6 +7,7 @@ public class Game
     public Player? Player2;
     public Player? Turn;
     public Player? Winner = null;
+  public bool BothReady => Player1?.IsReady == true && Player2?.IsReady == true;
 
     public Game(Guid id)
     {
@@ -67,6 +68,7 @@ public class Game
                     {
                         int index = rnd.Next(0, wordList.Count);
                         randomWords.Add(new(wordList[index]));
+                        wordList.RemoveAt(index);
                     }
                     break;
                 case 4:
@@ -74,6 +76,7 @@ public class Game
                     {
                         int index = rnd.Next(0, wordList.Count);
                         randomWords.Add(new(wordList[index]));
+                        wordList.RemoveAt(index);
                     }
                     break;
                 case 5:
@@ -81,12 +84,14 @@ public class Game
                     {
                         int index = rnd.Next(0, wordList.Count);
                         randomWords.Add(new(wordList[index]));
+                        wordList.RemoveAt(index);
                     }
                     break;
                 case 6:
                     {
                         int index = rnd.Next(0, wordList.Count);
                         randomWords.Add(new(wordList[index]));
+                        wordList.RemoveAt(index);
                     }
                     break;
             }
