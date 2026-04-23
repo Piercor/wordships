@@ -210,7 +210,7 @@ export default function GamePage() {
             </form>
             {wordInputError && <p className="error">{wordInputError}</p>}
 
-            <div className="guessed-words" data-testid="guessed-letters">
+            <div className="guessed-words" data-testid="guessed-words">
               <span className="guessed-label">Guessed words:</span>
               {guessedWords.map((word) => (
                 <span key={word} className="guessed-word">
