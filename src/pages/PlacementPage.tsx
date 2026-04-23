@@ -31,11 +31,8 @@ const PlacementPage = () => {
     if (!inPlace) return null;
 
     return canPlace(grid, selectedWord.name, hoverRow, hoverCol) ? "valid" : "invalid";
-    // return wordFits ? "valid" : "invalid";    
   };
 
-  /* if (horizontal) {
-  }; */
   // Kollar om ett ord kan placeras på en given rad och kolumn
   const canPlace = (
     grid: Square,
@@ -148,7 +145,7 @@ const PlacementPage = () => {
     }
 
     setGrid(newGrid);
-    setPlacements([...placements, { wordName: selectedWord.name, row, col }]);
+    setPlacements([...placements, { wordName: selectedWord.name, row, col, horizontal }]);
     setSelectedWord(null);
   };
 
@@ -177,6 +174,7 @@ const PlacementPage = () => {
                 className={selectedWord?.name === word.name ? "selected" : ""}
               >
                 {word.name.toUpperCase()}
+                {placedWords.includes(word.name) ? <div className="replace-btn" >X</div> : <></>}
               </button>
             ))}
           </div>
