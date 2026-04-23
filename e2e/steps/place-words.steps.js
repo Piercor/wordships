@@ -66,3 +66,11 @@ When("I click the remove button", async ({ page }) => {
 Then("the button for {string} should be enabled", async ({ page }, word) => {
   await expect(page.getByTestId("word-button").getByText(word)).toBeEnabled();
 });
+
+When("I click the direction button", async ({ page }) => {
+  await page.locator(".hv-btn").click();
+})
+
+Then("the direction should be vertical", async ({ page }) => {
+  await expect(page.locator(".hv-btn")).toContainText("⬇");
+})

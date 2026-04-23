@@ -44,3 +44,8 @@ Feature: Place words
     Then I should see a remove button
     When I click the remove button
     Then the button for "CAT" should be enabled
+
+  Scenario: Can change direction to vertical
+    When I click on the word "CAT"
+    And I click the direction button
+    Then the direction should be vertical
