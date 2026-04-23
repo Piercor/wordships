@@ -30,6 +30,7 @@
   font-weight: 600;
   background: rgba(0, 0, 0, 0.2);
   color: #b3b3b3;
+  position: relative;
 
   &.placed {
     background: rgba(71, 126, 90, 0.2);
@@ -44,6 +45,8 @@
 
   &.invalid {
     cursor: not-allowed;
+    background: rgba(180, 50, 50, 0.3);
+    color: #ff6b6b;
   }
 
   &.cell-found {
@@ -55,5 +58,35 @@
     background: rgba(71, 126, 90, 0.6);
     color: white;
     text-transform: uppercase;
+  }
+
+  &.word-hover {
+    background: rgba(71, 126, 90, 0.4);
+    cursor: pointer;
+  }
+}
+.remove-popup {
+  position: absolute;
+  transform: translateY(-100%);
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 4px;
+  padding: 4px 8px;
+  z-index: 10;
+
+  button {
+    color: white;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    margin-top: 0;
+    width: auto;
+    padding: 0;
+
+    &:hover {
+      background: none;
+      transform: none;
+      color: #ff6b6b;
+    }
   }
 }
