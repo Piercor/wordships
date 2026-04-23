@@ -5,7 +5,7 @@ import type { Square } from "../interface/Grid";
 import { createEmptyGrid } from "../utils/createEmptyGrid";
 
 export default function GamePage() {
-  const { player, opponent, playerWords, opponentWords, guessLetter, turn } =
+  const { player, opponent, playerWords, opponentWords, guessLetter, guessWord, turn } =
     useGame();
   const [playerGrid, setPlayerGrid] = useState<Square>(createEmptyGrid);
   const [opponentGrid, setOpponentGrid] = useState<Square>(createEmptyGrid);
@@ -15,8 +15,16 @@ export default function GamePage() {
     return saved ? JSON.parse(saved) : [];
   });
 
-  const [input, setInput] = useState("");
-  const [inputError, setInputError] = useState("");
+  const [guessedWords, setGuessedWords] = useState<string[]>(() => {
+    const saved = sessionStorage.getItem("guessedWords");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [letterInput, setLetterInput] = useState("");
+  const [letterInputError, setLetterInputError] = useState("");
+
+  const [wordInput, setWordInput] = useState("");
+  const [wordInputError, setWordInputError] = useState("");
 
   const isMyTurn = turn === player?.id;
 
@@ -32,20 +40,25 @@ export default function GamePage() {
     sessionStorage.setItem("guessedLetters", JSON.stringify(guessedLetters));
   }, [guessedLetters]);
 
-  const handleGuess = async (e: React.SubmitEvent) => {
+  useEffect(() => {
+    sessionStorage.setItem("guessedWords", JSON.stringify(guessedWords));
+  }, [guessedWords]);
+
+
+  const handleLetterGuess = async (e: React.SubmitEvent) => {
     e.preventDefault();
-    const letter = input.toLowerCase().trim();
+    const letter = letterInput.toLowerCase().trim();
     if (!letter || letter.length !== 1) return;
 
     if (guessedLetters.includes(letter)) {
-      setInputError("You have already guessed this letter");
+      setLetterInputError("You have already guessed this letter");
       return;
     }
 
     const data = await guessLetter(letter);
 
     setGuessedLetters([...guessedLetters, letter]);
-    setInput("");
+    setLetterInput("");
 
     if (data === "Hit") {
       setOpponentGrid((prev) =>
@@ -58,6 +71,45 @@ export default function GamePage() {
     }
   };
 
+  const handleWordGuess = async (e: React.SubmitEvent) => {
+    e.preventDefault();
+    const word = wordInput.toLowerCase().trim();
+    if (!word || word.length < 3 || word.length > 6) return;
+
+    if (guessedWords.includes(word)) {
+      setWordInputError("You have already guessed this word");
+      return;
+    }
+
+    const data = await guessWord(word);
+
+    setGuessedWords([...guessedWords, word]);
+    setWordInput("");
+
+    if (data === "Hit") {
+      setOpponentGrid((prev) =>
+        prev.map((row) =>
+          row.map((cell) =>
+            cell.wordName === word ? { ...cell, found: true } : cell,
+          ),
+        ),
+      );
+    }
+    if (data === "Miss") {
+      setPlayerGrid((prev) =>
+        prev.map((row) =>
+          row.map((cell) =>
+            cell.wordName === word ? { ...cell, found: true } : cell,
+          ),),);
+      setOpponentGrid((prev) =>
+        prev.map((row) =>
+          row.map((cell) =>
+            cell.wordName === word ? { ...cell, found: true } : cell,
+          ),),);
+    }
+  };
+
+
   const completedWordNames = new Set(
     opponentGrid
       .flat()
@@ -67,13 +119,23 @@ export default function GamePage() {
 
   const completedWords = opponentWords.length - completedWordNames.size;
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLetterInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (/^[a-zA-Z]$/.test(value) || value === "") {
-      setInput(value);
-      setInputError("");
+      setLetterInput(value);
+      setLetterInputError("");
     } else {
-      setInputError("Only letters (A-Z) are allowed");
+      setLetterInputError("Only letters (A-Z) are allowed");
+    }
+  };
+
+  const handleWordInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (/^[a-zA-Z]{1,6}$/.test(value) || value === "") {
+      setWordInput(value);
+      setWordInputError("");
+    } else {
+      setWordInputError("Max 6 letters (A-Z) are allowed");
     }
   };
 
@@ -88,7 +150,6 @@ export default function GamePage() {
               <Grid grid={opponentGrid} isOpponent={true} />
             </div>
             <div>
-
               <div data-testid="player-grid">
                 <h2>My Board</h2>
                 <p className="board-subtitle">{player?.name}</p>
@@ -102,13 +163,13 @@ export default function GamePage() {
               {isMyTurn ? "Your turn!" : "Waiting for opponent..."}
             </span>
 
-            <form onSubmit={handleGuess} className="guess-form">
+            <form onSubmit={handleLetterGuess} className="guess-letter-form">
               <input
                 data-testid="guess-input"
                 type="text"
-                maxLength={1}
-                value={input}
-                onChange={handleInputChange}
+                minLength={1}
+                value={letterInput}
+                onChange={handleLetterInputChange}
                 disabled={!isMyTurn}
               />
               <button
@@ -116,10 +177,10 @@ export default function GamePage() {
                 data-testid="guess-btn"
                 disabled={!isMyTurn}
               >
-                Guess
+                Guess letter
               </button>
             </form>
-            {inputError && <p className="error">{inputError}</p>}
+            {letterInputError && <p className="error">{letterInputError}</p>}
 
             <div className="guessed-letters" data-testid="guessed-letters">
               <span className="guessed-label">Guessed letters:</span>
@@ -129,6 +190,35 @@ export default function GamePage() {
                 </span>
               ))}
             </div>
+
+            <form onSubmit={handleWordGuess} className="guess-word-form">
+              <input
+                data-testid="guess-input"
+                type="text"
+                minLength={3}
+                value={wordInput}
+                onChange={handleWordInputChange}
+                disabled={!isMyTurn}
+              />
+              <button
+                type="submit"
+                data-testid="guess-btn"
+                disabled={!isMyTurn}
+              >
+                Guess word
+              </button>
+            </form>
+            {wordInputError && <p className="error">{wordInputError}</p>}
+
+            <div className="guessed-words" data-testid="guessed-letters">
+              <span className="guessed-label">Guessed words:</span>
+              {guessedWords.map((word) => (
+                <span key={word} className="guessed-word">
+                  {word}
+                </span>
+              ))}
+            </div>
+
           </div>
 
           <div className="game-status">
