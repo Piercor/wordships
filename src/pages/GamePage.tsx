@@ -28,6 +28,8 @@ export default function GamePage() {
 
   const isMyTurn = turn === player?.id;
 
+  const [letterWord, setLetterWord] = useState<boolean>(true);
+
   useEffect(() => {
     setPlayerGrid(buildGrid(playerWords));
   }, [playerWords]);
@@ -162,63 +164,61 @@ export default function GamePage() {
             <span className={`turn-indicator${isMyTurn ? "" : " waiting"}`}>
               {isMyTurn ? "Your turn!" : "Waiting for opponent..."}
             </span>
+            <button className="letter-word-btn" onClick={() => [setLetterWord(!letterWord), setLetterInputError(""), setWordInputError("")]}>{letterWord ? "Guess letter" : "Guess word"}</button>
 
-            <form onSubmit={handleLetterGuess} className="guess-letter-form">
-              <input
-                data-testid="guess-input"
-                type="text"
-                minLength={1}
-                value={letterInput}
-                onChange={handleLetterInputChange}
-                disabled={!isMyTurn}
-              />
-              <button
-                type="submit"
-                data-testid="guess-btn"
-                disabled={!isMyTurn}
-              >
-                Guess letter
-              </button>
-            </form>
-            {letterInputError && <p className="error">{letterInputError}</p>}
+            {letterWord ?
+              <form onSubmit={handleLetterGuess} className="guess-letter-form">
+                <input
+                  data-testid="guess-input"
+                  type="text"
+                  minLength={1}
+                  value={letterInput}
+                  onChange={handleLetterInputChange}
+                  disabled={!isMyTurn}
+                />
+                <button
+                  type="submit"
+                  data-testid="guess-btn"
+                  disabled={!isMyTurn}
+                >
+                  Guess letter
+                </button>
+              </form>
+              :
+              <form onSubmit={handleWordGuess} className="guess-word-form">
+                <input
+                  data-testid="guess-input"
+                  type="text"
+                  minLength={3}
+                  value={wordInput}
+                  onChange={handleWordInputChange}
+                  disabled={!isMyTurn}
+                />
+                <button
+                  type="submit"
+                  data-testid="guess-btn"
+                  disabled={!isMyTurn}
+                >
+                  Guess word
+                </button>
+              </form>
+            }
+
+            {letterWord ? letterInputError && <p className="error">{letterInputError}</p> : wordInputError && <p className="error">{wordInputError}</p>}
+
 
             <div className="guessed-letters" data-testid="guessed-letters">
-              <span className="guessed-label">Guessed letters:</span>
+              <span className="guessed-label">Guessed:</span>
               {guessedLetters.map((letter) => (
                 <span key={letter} className="guessed-letter">
                   {letter}
                 </span>
-              ))}
-            </div>
-
-            <form onSubmit={handleWordGuess} className="guess-word-form">
-              <input
-                data-testid="guess-input"
-                type="text"
-                minLength={3}
-                value={wordInput}
-                onChange={handleWordInputChange}
-                disabled={!isMyTurn}
-              />
-              <button
-                type="submit"
-                data-testid="guess-btn"
-                disabled={!isMyTurn}
-              >
-                Guess word
-              </button>
-            </form>
-            {wordInputError && <p className="error">{wordInputError}</p>}
-
-            <div className="guessed-words" data-testid="guessed-words">
-              <span className="guessed-label">Guessed words:</span>
-              {guessedWords.map((word) => (
+              ))}{guessedWords.map((word) => (
                 <span key={word} className="guessed-word">
                   {word}
                 </span>
               ))}
             </div>
-
           </div>
 
           <div className="game-status">
