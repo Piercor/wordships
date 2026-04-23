@@ -44,9 +44,33 @@ Then("{string} should still be in the word list", async ({ page }, word) => {
 });
 
 When("I place the word on a different row", async ({ page }) => {
-    await page.locator(".cell").nth(10).click();
+    await page.locator(".cell").nth(24).click();
 });
 
 Then("the Ready button should be enabled", async ({ page }) => {
   await expect(page.getByTestId("ready-btn")).toBeEnabled();
 });
+
+When("I click on the placed word {string}", async ({ page }, word) => {
+  await page.locator(".cell.placed").first().click();
+});
+
+Then("I should see a remove button", async ({ page }) => {
+  await expect(page.locator(".remove-popup")).toBeVisible();
+});
+
+When("I click the remove button", async ({ page }) => {
+  await page.getByTestId("remove-popup").click();
+});
+
+Then("the button for {string} should be enabled", async ({ page }, word) => {
+  await expect(page.getByTestId("word-button").getByText(word)).toBeEnabled();
+});
+
+When("I click the direction button", async ({ page }) => {
+  await page.locator(".hv-btn").click();
+})
+
+Then("the direction should be vertical", async ({ page }) => {
+  await expect(page.locator(".hv-btn")).toContainText("⬇");
+})
