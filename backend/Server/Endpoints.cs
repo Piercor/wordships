@@ -147,18 +147,37 @@ public static class Endpoints
         string wordName = placement.GetProperty("wordName").GetString()!;
         int row = placement.GetProperty("row").GetInt32();
         int col = placement.GetProperty("col").GetInt32();
+        bool horizontal = placement.GetProperty("horizontal").GetBoolean();
 
-        foreach (Word word in player.WordList)
+        if (horizontal)
         {
-          if (word.Name == wordName)
+          foreach (Word word in player.WordList)
           {
-            for (int i = 0; i < word.LetterList.Count; i++)
+            if (word.Name == wordName)
             {
-              word.LetterList[i].Row = row;
-              word.LetterList[i].Col = col + i;
+              for (int i = 0; i < word.LetterList.Count; i++)
+              {
+                word.LetterList[i].Row = row;
+                word.LetterList[i].Col = col + i;
+              }
             }
           }
         }
+        else
+        {
+          foreach (Word word in player.WordList)
+          {
+            if (word.Name == wordName)
+            {
+              for (int i = 0; i < word.LetterList.Count; i++)
+              {
+                word.LetterList[i].Row = row + i;
+                word.LetterList[i].Col = col;
+              }
+            }
+          }
+        }
+
       }
 
       player.IsReady = true;
