@@ -36,3 +36,11 @@ Feature: Place words
     And I click on the word "DOG"
     And I place the word on a different row
     Then the Ready button should be enabled
+
+  Scenario: Can remove a placed word
+    When I click on the word "CAT"
+    And I place the word on the grid
+    And I click on the placed word "CAT"
+    Then I should see a remove button
+    When I click the remove button
+    Then the button for "CAT" should be enabled
