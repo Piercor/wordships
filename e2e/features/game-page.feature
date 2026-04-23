@@ -44,3 +44,15 @@ Feature: Game Page
   Scenario: A correct guess is highlighted on the opponent's board
     When I guess the letter "c" and it is a hit
     Then the cell with "c" should have the class "cell-hit"
+
+  Scenario: Player can guess a word
+    When I switch to word guess mode
+    And I type the word "cat" and submit word guess
+    Then "cat" should appear in the guessed words list
+
+  Scenario: Word input is visible when switching to word mode
+    When I switch to word guess mode
+    Then I should see the word guess input
+
+  Scenario: Letter input is visible by default
+    Then I should see the letter guess input
