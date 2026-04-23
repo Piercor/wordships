@@ -26,7 +26,7 @@ export default function ResultPage() {
       )}
       <div className={`card result-card ${didWin ? "win" : "lose"}`}>
         <div className="result-page">
-          <h1 className="heading">{didWin ? "You won!" : "You lost!"}</h1>
+          <h1 className="heading">{didWin ? "You won!🎉" : "You lost!☠️"}</h1>
           <p className="winner-name">Winner: {winner?.name}</p>
           <button
             data-testid="reset-game-btn"

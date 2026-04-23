@@ -41,7 +41,6 @@
     0 0 25px rgba(80, 255, 150, 0.15);
 }
 
-
 .result-card.lose::before {
   background: radial-gradient(circle at 60% 40%,
       rgba(255, 80, 80, 0.25) 0%,
@@ -53,7 +52,7 @@
 .result-card.lose {
   box-shadow:
     0 10px 40px rgba(0, 0, 0, 0.25),
-    0 0 25px rgba(255, 80, 80, 0.15);
+    0 0 25px rgba(143, 55, 55, 0.573);
 }
 
 .rain {
@@ -69,7 +68,8 @@
   position: absolute;
   top: -2rem;
   font-size: 1.5rem;
-  animation: fall linear infinite;
+  // animation: fall linear infinite;
+  animation: fall linear 1;
 
   &:nth-child(1) {
     left: 10%;
