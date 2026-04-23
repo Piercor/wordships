@@ -20,6 +20,7 @@ interface GameContextInterface {
   bothReady: boolean;
   setReady: (placements: Placement[]) => Promise<void>;
   guessLetter: (letter: string) => Promise<GuessResult>;
+  guessWord: (word: string) => Promise<GuessResult>;
   turn: string | null;
   winner: Player | null;
   resetGame: () => void;
@@ -167,6 +168,33 @@ export const GameProvider = ({ children }: { children: React.ReactNode; }) => {
     return data;
   };
 
+  const guessWord = async (word: string): Promise<GuessResult> => {
+    const result = await fetch("/api/player/guess-word", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        gameId,
+        playerGuessingId: player?.id,
+        playerToGuessId: opponent?.id,
+        word,
+      }),
+    });
+
+    if (!result.ok) throw new Error("Failed to guess word");
+
+    const data = await result.json();
+    const gameResult = await fetch(`/api/game/${gameId}`);
+    const gameData = await gameResult.json();
+    setTurn(gameData.turn);
+
+    if (data.winner) {
+      setWinner(data.winner);
+    }
+    console.log(data);
+    return data;
+  };
+
+
   const resetGame = () => {
     setOpponent(null);
     setPlayerWords([]);
@@ -297,6 +325,8 @@ export const GameProvider = ({ children }: { children: React.ReactNode; }) => {
     };
 
     fetchOpponentWords();
+    const interval = setInterval(fetchOpponentWords, 3000);
+    return () => clearInterval(interval);
   }, [bothReady, opponent?.id]);
 
   // Hämta egna ord under spelet
@@ -332,6 +362,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode; }) => {
         bothReady,
         setReady,
         guessLetter,
+        guessWord,
         turn,
         winner,
         resetGame,

@@ -5,8 +5,15 @@ import type { Square } from "../interface/Grid";
 import { createEmptyGrid } from "../utils/createEmptyGrid";
 
 export default function GamePage() {
-  const { player, opponent, playerWords, opponentWords, guessLetter, turn } =
-    useGame();
+  const {
+    player,
+    opponent,
+    playerWords,
+    opponentWords,
+    guessLetter,
+    guessWord,
+    turn,
+  } = useGame();
   const [playerGrid, setPlayerGrid] = useState<Square>(createEmptyGrid);
   const [opponentGrid, setOpponentGrid] = useState<Square>(createEmptyGrid);
 
@@ -15,10 +22,20 @@ export default function GamePage() {
     return saved ? JSON.parse(saved) : [];
   });
 
-  const [input, setInput] = useState("");
-  const [inputError, setInputError] = useState("");
+  const [guessedWords, setGuessedWords] = useState<string[]>(() => {
+    const saved = sessionStorage.getItem("guessedWords");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [letterInput, setLetterInput] = useState("");
+  const [letterInputError, setLetterInputError] = useState("");
+
+  const [wordInput, setWordInput] = useState("");
+  const [wordInputError, setWordInputError] = useState("");
 
   const isMyTurn = turn === player?.id;
+
+  const [letterWord, setLetterWord] = useState<boolean>(true);
 
   useEffect(() => {
     setPlayerGrid(buildGrid(playerWords));
@@ -32,26 +49,72 @@ export default function GamePage() {
     sessionStorage.setItem("guessedLetters", JSON.stringify(guessedLetters));
   }, [guessedLetters]);
 
-  const handleGuess = async (e: React.SubmitEvent) => {
+  useEffect(() => {
+    sessionStorage.setItem("guessedWords", JSON.stringify(guessedWords));
+  }, [guessedWords]);
+
+  const handleLetterGuess = async (e: React.SubmitEvent) => {
     e.preventDefault();
-    const letter = input.toLowerCase().trim();
+    const letter = letterInput.toLowerCase().trim();
     if (!letter || letter.length !== 1) return;
 
     if (guessedLetters.includes(letter)) {
-      setInputError("You have already guessed this letter");
+      setLetterInputError("You have already guessed this letter");
       return;
     }
 
     const data = await guessLetter(letter);
 
     setGuessedLetters([...guessedLetters, letter]);
-    setInput("");
+    setLetterInput("");
 
     if (data === "Hit") {
       setOpponentGrid((prev) =>
         prev.map((row) =>
           row.map((cell) =>
             cell.letter === letter ? { ...cell, found: true } : cell,
+          ),
+        ),
+      );
+    }
+  };
+
+  const handleWordGuess = async (e: React.SubmitEvent) => {
+    e.preventDefault();
+    const word = wordInput.toLowerCase().trim();
+    if (!word || word.length < 3 || word.length > 6) return;
+
+    if (guessedWords.includes(word)) {
+      setWordInputError("You have already guessed this word");
+      return;
+    }
+
+    const data = await guessWord(word);
+
+    setGuessedWords([...guessedWords, word]);
+    setWordInput("");
+
+    if (data === "Hit") {
+      setOpponentGrid((prev) =>
+        prev.map((row) =>
+          row.map((cell) =>
+            cell.wordName === word ? { ...cell, found: true } : cell,
+          ),
+        ),
+      );
+    }
+    if (data === "Miss") {
+      setPlayerGrid((prev) =>
+        prev.map((row) =>
+          row.map((cell) =>
+            cell.wordName === word ? { ...cell, found: true } : cell,
+          ),
+        ),
+      );
+      setOpponentGrid((prev) =>
+        prev.map((row) =>
+          row.map((cell) =>
+            cell.wordName === word ? { ...cell, found: true } : cell,
           ),
         ),
       );
@@ -67,13 +130,23 @@ export default function GamePage() {
 
   const completedWords = opponentWords.length - completedWordNames.size;
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLetterInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (/^[a-zA-Z]$/.test(value) || value === "") {
-      setInput(value);
-      setInputError("");
+      setLetterInput(value);
+      setLetterInputError("");
     } else {
-      setInputError("Only letters (A-Z) are allowed");
+      setLetterInputError("Only letters (A-Z) are allowed");
+    }
+  };
+
+  const handleWordInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (/^[a-zA-Z]{1,6}$/.test(value) || value === "") {
+      setWordInput(value);
+      setWordInputError("");
+    } else {
+      setWordInputError("Max 6 letters (A-Z) are allowed");
     }
   };
 
@@ -88,7 +161,6 @@ export default function GamePage() {
               <Grid grid={opponentGrid} isOpponent={true} />
             </div>
             <div>
-
               <div data-testid="player-grid">
                 <h2>My Board</h2>
                 <p className="board-subtitle">{player?.name}</p>
@@ -102,30 +174,92 @@ export default function GamePage() {
               {isMyTurn ? "Your turn!" : "Waiting for opponent..."}
             </span>
 
-            <form onSubmit={handleGuess} className="guess-form">
-              <input
-                data-testid="guess-input"
-                type="text"
-                maxLength={1}
-                value={input}
-                onChange={handleInputChange}
-                disabled={!isMyTurn}
-              />
+            <div className="guess-tabs">
               <button
-                type="submit"
-                data-testid="guess-btn"
-                disabled={!isMyTurn}
+                data-testid="tab-letter"
+                className={`guess-tab${letterWord ? " active" : ""}`}
+                onClick={() => {
+                  setLetterWord(true);
+                  setLetterInputError("");
+                  setWordInputError("");
+                  setLetterInput("");
+                  setWordInput("");
+                }}
               >
-                Guess
+                Letter
               </button>
-            </form>
-            {inputError && <p className="error">{inputError}</p>}
+              <button
+                data-testid="tab-word"
+                className={`guess-tab${!letterWord ? " active" : ""}`}
+                onClick={() => {
+                  setLetterWord(false);
+                  setLetterInputError("");
+                  setWordInputError("");
+                  setLetterInput("");
+                  setWordInput("");
+                }}
+              >
+                Word
+              </button>
+            </div>
 
-            <div className="guessed-letters" data-testid="guessed-letters">
-              <span className="guessed-label">Guessed letters:</span>
+            {letterWord ? (
+              <form className="guess-form" onSubmit={handleLetterGuess}>
+                <input
+                  data-testid="guess-input-letter"
+                  type="text"
+                  aria-label="Guess a letter"
+                  name="letter"
+                  maxLength={1}
+                  value={letterInput}
+                  onChange={handleLetterInputChange}
+                  disabled={!isMyTurn}
+                />
+                <button
+                  type="submit"
+                  data-testid="guess-btn-letter"
+                  disabled={!isMyTurn}
+                >
+                  Guess
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleWordGuess} className="guess-form">
+                <input
+                  data-testid="guess-input-word"
+                  type="text"
+                  name="word"
+                  aria-label="Guess a word"
+                  minLength={3}
+                  maxLength={6}
+                  value={wordInput}
+                  onChange={handleWordInputChange}
+                  disabled={!isMyTurn}
+                />
+                <button
+                  type="submit"
+                  data-testid="guess-btn-word"
+                  disabled={!isMyTurn}
+                >
+                  Guess
+                </button>
+              </form>
+            )}
+
+            {letterWord
+              ? letterInputError && <p className="error">{letterInputError}</p>
+              : wordInputError && <p className="error">{wordInputError}</p>}
+
+            <div className="guessed-list" data-testid="guessed-list">
+              <span className="guessed-label">Guessed:</span>
               {guessedLetters.map((letter) => (
                 <span key={letter} className="guessed-letter">
                   {letter}
+                </span>
+              ))}
+              {guessedWords.map((word) => (
+                <span key={word} className="guessed-word">
+                  {word}
                 </span>
               ))}
             </div>

@@ -64,26 +64,24 @@ Then("I should see my board", async ({ page }) => {
   await expect(page.getByTestId("player-grid")).toBeVisible();
 });
 
-// --- Turn indicator ---
-
 Then("I should see the turn indicator {string}", async ({ page }, text) => {
   await expect(page.locator(".turn-indicator")).toHaveText(text);
 });
 
 Then("the guess input should be enabled", async ({ page }) => {
-  await expect(page.getByTestId("guess-input")).toBeEnabled();
+  await expect(page.getByTestId("guess-input-letter")).toBeEnabled();
 });
 
 Then("the guess input should be disabled", async ({ page }) => {
-  await expect(page.getByTestId("guess-input")).toBeDisabled();
+  await expect(page.getByTestId("guess-input-letter")).toBeDisabled();
 });
 
 Then("the guess button should be enabled", async ({ page }) => {
-  await expect(page.getByTestId("guess-btn")).toBeEnabled();
+  await expect(page.getByTestId("guess-btn-letter")).toBeEnabled();
 });
 
 Then("the guess button should be disabled", async ({ page }) => {
-  await expect(page.getByTestId("guess-btn")).toBeDisabled();
+  await expect(page.getByTestId("guess-btn-letter")).toBeDisabled();
 });
 
 When("I type the letter {string} and submit", async ({ page }, letter) => {
@@ -99,17 +97,17 @@ When("I type the letter {string} and submit", async ({ page }, letter) => {
       },
     });
   });
-  await page.getByTestId("guess-input").fill(letter);
-  await page.getByTestId("guess-btn").click();
-  await expect(page.getByTestId("guessed-letters")).toContainText(letter); 
+  await page.getByTestId("guess-input-letter").fill(letter);
+  await page.getByTestId("guess-btn-letter").click();
+  await expect(page.getByTestId("guessed-list")).toContainText(letter); 
 });
 
 When("I type {string} in the guess input", async ({ page }, value) => {
-  await page.getByTestId("guess-input").fill(value);
+  await page.getByTestId("guess-input-letter").fill(value);
 });
 
 When("I click the guess button", async ({ page }) => {
-  await page.getByTestId("guess-btn").click();
+  await page.getByTestId("guess-btn-letter").click();
 });
 
 When("I guess the letter {string} and it is a hit", async ({ page }, letter) => {
@@ -125,12 +123,12 @@ When("I guess the letter {string} and it is a hit", async ({ page }, letter) => 
       },
     });
   });
-  await page.getByTestId("guess-input").fill(letter);
-  await page.getByTestId("guess-btn").click();
+  await page.getByTestId("guess-input-letter").fill(letter);
+  await page.getByTestId("guess-btn-letter").click();
 });
 
 Then("{string} should appear in the guessed letters list", async ({ page }, letter) => {
-  await expect(page.getByTestId("guessed-letters")).toContainText(letter);
+  await expect(page.getByTestId("guessed-list")).toContainText(letter);
 });
 
 Then("I should see the guess error {string}", async ({ page }, errorMessage) => {
@@ -147,4 +145,29 @@ Then("I should see the words left count {string}", async ({ page }, text) => {
 
 Then("I should see the words found count {string}", async ({ page }, text) => {
   await expect(page.locator(".status-badge.found")).toHaveText(text);
+});
+
+When("I switch to word guess mode", async ({ page }) => {
+  await page.getByTestId("tab-word").click();
+});
+
+When("I type the word {string} and submit word guess", async ({ page }, word) => {
+  await page.route("*/**/api/player/guess-word", async (route) => {
+    await route.fulfill({ json: "Miss" });
+  });
+  await expect(page.getByTestId("guess-input-word")).toBeVisible();
+  await page.getByTestId("guess-input-word").fill(word);
+  await page.getByTestId("guess-btn-word").click();
+});
+
+Then("{string} should appear in the guessed words list", async ({ page }, word) => {
+  await expect(page.getByTestId("guessed-list")).toContainText(word);
+});
+
+Then("I should see the word guess input", async ({ page }) => { 
+  await expect(page.getByTestId("guess-input-word")).toBeVisible();
+});
+
+Then("I should see the letter guess input", async ({ page }) => { 
+  await expect(page.getByTestId("guess-input-letter")).toBeVisible();
 });
