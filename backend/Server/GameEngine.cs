@@ -43,26 +43,7 @@ public static class GameEngine
     if (found) { return "Hit"; }
     else { return "Miss"; }
   }
-  public static void Penalty(Guid gameId, Guid playerId)
-  {
-    var game = Games[gameId];
-    Player? player = game.GetPlayer(playerId);
 
-    bool flipped = false;
-
-    do
-    {
-      Random rnd1 = new Random();
-      Random rnd2 = new Random();
-      Word word = player!.GetWordList()[rnd1.Next(player.WordList.Count - 1)];
-      Letter letter = word.LetterList[rnd2.Next(word.LetterList.Count - 1)];
-      if (!letter.Found)
-      {
-        letter.Found = true;
-        flipped = true;
-      }
-    } while (!flipped);
-  }
   public static bool FoundAllWords(Guid gameId, Guid playerId)
   {
     Game? game = Games[gameId];
@@ -81,6 +62,7 @@ public static class GameEngine
     return true;
   }
 
+
   public static bool PlayerHasWord(Guid gameId, Guid playerId, string guessedWord)
   {
     var game = Games[gameId];
@@ -88,10 +70,6 @@ public static class GameEngine
 
     foreach (Word word in player!.WordList)
     {
-      if (word.Found)
-      {
-        return false;
-      }
       if (word.Name == guessedWord)
       {
         foreach (Letter letter in word.LetterList)
@@ -108,5 +86,57 @@ public static class GameEngine
     }
     game.Turn = game.Turn == game.Player1 ? game.Player2 : game.Player1;
     return false;
+  }
+
+  public static void Penalty(Guid gameId, Guid playerId)
+  {
+    var game = Games[gameId];
+    Player? player = game.GetPlayer(playerId);
+
+    bool flipped = false;
+    int foundCount = 0;
+
+    foreach (Word word in player!.WordList)
+    {
+      foreach (Letter letter in word.LetterList)
+      {
+        if (letter.Found)
+        {
+          foundCount++;
+        }
+      }
+    }
+
+    if (foundCount < 39)
+    {
+      do
+      {
+        Random rnd1 = new Random();
+        Random rnd2 = new Random();
+        Word word = player!.GetWordList()[rnd1.Next(player.WordList.Count - 1)];
+        Letter letter = word.LetterList[rnd2.Next(word.LetterList.Count - 1)];
+        if (!letter.Found)
+        {
+          letter.Found = true;
+          flipped = true;
+        }
+      } while (!flipped);
+    }
+    else if (foundCount == 39)
+    {
+      foreach (Word word in player.WordList)
+      {
+        if (!word.Found)
+        {
+          foreach (Letter letter in word.LetterList)
+          {
+            if (!letter.Found)
+            {
+              letter.Found = true;
+            }
+          }
+        }
+      }
+    }
   }
 }
