@@ -1,0 +1,31 @@
+.placement-info {
+  color: #b3b3b3;
+  font-size: 14px;
+  min-height: 24px;
+}
+
+.placement-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  align-items: center;
+}
+
+.placement-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+
+  button {
+    width: auto;
+    margin-top: 0;
+    padding: 8px 16px;
+
+    &.selected {
+      background: #2a5c3d;
+      outline: 2px solid white;
+    }
+  }
+}

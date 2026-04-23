@@ -48,25 +48,17 @@ public static class GameEngine
   {
     Game? game = Games[gameId];
     Player? player = game.GetPlayer(playerId);
-    int totalLetters = 40;
-    int foundCount = 0;
+
     foreach (Word word in player!.WordList)
     {
       foreach (Letter letter in word.LetterList)
       {
-        if (letter.Found)
+        if (!letter.Found)
         {
-          foundCount++;
+          return false;
         }
       }
     }
-    if (foundCount == totalLetters)
-    {
-      return true;
-    }
-    else
-    {
-      return false;
-    }
+    return true;
   }
 }
