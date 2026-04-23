@@ -39,8 +39,8 @@ export function postResponse() {
   pm.test('Status code is 200', () => pm.response.to.have.status(200));
 
   const json = pm.response.json();
-  pm.test('Response has correct guess, wrong guess, or winner', () =>
-    pm.expect(json).to.be.oneOf(['Word guessed correctly!', 'Word guessed wrong!',
+  pm.test('Response has hit, miss or winner', () =>
+    pm.expect(json).to.be.oneOf(['Hit', 'Miss',
       `Winner: ${pm.environment.get("player1Id")}`])
   );
 
