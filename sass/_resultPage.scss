@@ -8,6 +8,108 @@
   }
 
   .heading {
-    color: white;
+    color: rgba(255, 255, 255, 0.816);
+  }
+}
+
+.result-card {
+  position: relative;
+  z-index: 1;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -120px;
+    filter: blur(60px);
+    z-index: -1;
+    pointer-events: none;
+  }
+}
+
+
+.result-card.win::before {
+  background: radial-gradient(circle at 60% 40%,
+      rgba(80, 255, 150, 0.25) 0%,
+      rgba(80, 255, 150, 0.12) 30%,
+      rgba(80, 255, 150, 0.05) 50%,
+      transparent 75%);
+}
+
+.result-card.win {
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.25),
+    0 0 25px rgba(80, 255, 150, 0.15);
+}
+
+
+.result-card.lose::before {
+  background: radial-gradient(circle at 60% 40%,
+      rgba(255, 80, 80, 0.25) 0%,
+      rgba(255, 80, 80, 0.12) 30%,
+      rgba(255, 80, 80, 0.05) 50%,
+      transparent 75%);
+}
+
+.result-card.lose {
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.25),
+    0 0 25px rgba(255, 80, 80, 0.15);
+}
+
+.rain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.rain-drop {
+  position: absolute;
+  top: -2rem;
+  font-size: 1.5rem;
+  animation: fall linear infinite;
+
+  &:nth-child(1) {
+    left: 10%;
+    animation-duration: 2s;
+    animation-delay: 0s;
+  }
+
+  &:nth-child(2) {
+    left: 25%;
+    animation-duration: 2.4s;
+    animation-delay: 0.3s;
+  }
+
+  &:nth-child(3) {
+    left: 45%;
+    animation-duration: 1.8s;
+    animation-delay: 0.8s;
+  }
+
+  &:nth-child(4) {
+    left: 65%;
+    animation-duration: 2.2s;
+    animation-delay: 0.1s;
+  }
+
+  &:nth-child(5) {
+    left: 80%;
+    animation-duration: 2s;
+    animation-delay: 0.5s;
+  }
+}
+
+@keyframes fall {
+  from {
+    transform: translateY(-5vh);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateY(105vh);
+    opacity: 0.5;
   }
 }
