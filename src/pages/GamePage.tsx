@@ -5,8 +5,15 @@ import type { Square } from "../interface/Grid";
 import { createEmptyGrid } from "../utils/createEmptyGrid";
 
 export default function GamePage() {
-  const { player, opponent, playerWords, opponentWords, guessLetter, guessWord, turn } =
-    useGame();
+  const {
+    player,
+    opponent,
+    playerWords,
+    opponentWords,
+    guessLetter,
+    guessWord,
+    turn,
+  } = useGame();
   const [playerGrid, setPlayerGrid] = useState<Square>(createEmptyGrid);
   const [opponentGrid, setOpponentGrid] = useState<Square>(createEmptyGrid);
 
@@ -45,7 +52,6 @@ export default function GamePage() {
   useEffect(() => {
     sessionStorage.setItem("guessedWords", JSON.stringify(guessedWords));
   }, [guessedWords]);
-
 
   const handleLetterGuess = async (e: React.SubmitEvent) => {
     e.preventDefault();
@@ -102,15 +108,18 @@ export default function GamePage() {
         prev.map((row) =>
           row.map((cell) =>
             cell.wordName === word ? { ...cell, found: true } : cell,
-          ),),);
+          ),
+        ),
+      );
       setOpponentGrid((prev) =>
         prev.map((row) =>
           row.map((cell) =>
             cell.wordName === word ? { ...cell, found: true } : cell,
-          ),),);
+          ),
+        ),
+      );
     }
   };
-
 
   const completedWordNames = new Set(
     opponentGrid
@@ -164,56 +173,91 @@ export default function GamePage() {
             <span className={`turn-indicator${isMyTurn ? "" : " waiting"}`}>
               {isMyTurn ? "Your turn!" : "Waiting for opponent..."}
             </span>
-            <button className="letter-word-btn" onClick={() => [setLetterWord(!letterWord), setLetterInputError(""), setWordInputError("")]}>{letterWord ? "Guess letter" : "Guess word"}</button>
 
-            {letterWord ?
-              <form onSubmit={handleLetterGuess} className="guess-letter-form">
+            <div className="guess-tabs">
+              <button
+                data-testid="tab-letter"
+                className={`guess-tab${letterWord ? " active" : ""}`}
+                onClick={() => {
+                  setLetterWord(true);
+                  setLetterInputError("");
+                  setWordInputError("");
+                  setLetterInput("");
+                  setWordInput("");
+                }}
+              >
+                Letter
+              </button>
+              <button
+                data-testid="tab-word"
+                className={`guess-tab${!letterWord ? " active" : ""}`}
+                onClick={() => {
+                  setLetterWord(false);
+                  setLetterInputError("");
+                  setWordInputError("");
+                  setLetterInput("");
+                  setWordInput("");
+                }}
+              >
+                Word
+              </button>
+            </div>
+
+            {letterWord ? (
+              <form className="guess-form" onSubmit={handleLetterGuess}>
                 <input
-                  data-testid="guess-input"
+                  data-testid="guess-input-letter"
                   type="text"
-                  minLength={1}
+                  aria-label="Guess a letter"
+                  name="letter"
+                  maxLength={1}
                   value={letterInput}
                   onChange={handleLetterInputChange}
                   disabled={!isMyTurn}
                 />
                 <button
                   type="submit"
-                  data-testid="guess-btn"
+                  data-testid="guess-btn-letter"
                   disabled={!isMyTurn}
                 >
-                  Guess letter
+                  Guess
                 </button>
               </form>
-              :
-              <form onSubmit={handleWordGuess} className="guess-word-form">
+            ) : (
+              <form onSubmit={handleWordGuess} className="guess-form">
                 <input
-                  data-testid="guess-input"
+                  data-testid="guess-input-word"
                   type="text"
+                  name="word"
+                  aria-label="Guess a word"
                   minLength={3}
+                  maxLength={6}
                   value={wordInput}
                   onChange={handleWordInputChange}
                   disabled={!isMyTurn}
                 />
                 <button
                   type="submit"
-                  data-testid="guess-btn"
+                  data-testid="guess-btn-word"
                   disabled={!isMyTurn}
                 >
-                  Guess word
+                  Guess
                 </button>
               </form>
-            }
+            )}
 
-            {letterWord ? letterInputError && <p className="error">{letterInputError}</p> : wordInputError && <p className="error">{wordInputError}</p>}
+            {letterWord
+              ? letterInputError && <p className="error">{letterInputError}</p>
+              : wordInputError && <p className="error">{wordInputError}</p>}
 
-
-            <div className="guessed-letters" data-testid="guessed-letters">
+            <div className="guessed-list" data-testid="guessed-list">
               <span className="guessed-label">Guessed:</span>
               {guessedLetters.map((letter) => (
                 <span key={letter} className="guessed-letter">
                   {letter}
                 </span>
-              ))}{guessedWords.map((word) => (
+              ))}
+              {guessedWords.map((word) => (
                 <span key={word} className="guessed-word">
                   {word}
                 </span>
