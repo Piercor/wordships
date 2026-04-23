@@ -25,7 +25,7 @@
   }
 }
 
-.grids > div {
+.grids>div {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -46,7 +46,7 @@
   max-width: 400px;
 }
 
-.guess-form {
+.guess-letter-form {
   display: flex;
   gap: 12px;
   align-items: center;
@@ -54,6 +54,39 @@
 
   input {
     width: 44px;
+    height: 44px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0;
+    color: white;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+
+    &:valid {
+      background: rgba(0, 0, 0, 0.4);
+      color: white;
+    }
+  }
+
+  button {
+    width: auto;
+    height: 44px;
+    margin-top: 0;
+    padding: 12px 32px;
+  }
+}
+
+.guess-word-form {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+
+  input {
+    width: 120px;
     height: 44px;
     text-align: center;
     font-size: 22px;
@@ -89,6 +122,16 @@
   border-radius: 8px;
 }
 
+.guessed-words {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 12px 16px;
+  border-radius: 8px;
+}
+
 .guessed-label {
   color: #b3b3b3;
   font-weight: 600;
@@ -98,6 +141,22 @@
 
 .guessed-letter {
   width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: #b3b3b3;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.guessed-word {
+  width: auto;
+  padding: 0 10px;
   height: 32px;
   display: flex;
   align-items: center;
@@ -174,3 +233,9 @@
     background: rgba(255, 255, 255, 0.06);
   }
 }
+
+/* .guessing-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+} */
