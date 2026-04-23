@@ -4,13 +4,17 @@
   gap: 4px;
   width: 100%;
 
+  &.own {
+    grid-template-columns: repeat(10, 20px);
+  }
+
   @media (min-width: 500px) {
     grid-template-columns: repeat(10, 40px);
     width: auto;
-  }
 
-  &.own {
-    grid-template-columns: repeat(10, 20px);
+    &.own {
+      grid-template-columns: repeat(10, 20px);
+    }
   }
 }
 
