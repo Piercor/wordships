@@ -24,7 +24,7 @@ When("I place all my words and click ready", async ({ page }) => {
   await page.locator(".cell").nth(0).click();
 
   await wordButtons.nth(1).click();
-  await page.locator(".cell").nth(10).click();
+  await page.locator(".cell").nth(24).click();
 
   await expect(page.getByTestId("ready-btn")).toBeEnabled();
   await page.getByTestId("ready-btn").click();
