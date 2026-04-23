@@ -31,7 +31,11 @@
 }
 
 .hv-btn {
-  width: auto;
-  margin-left: 5px;
-  padding: 2px 2px;
+  width: 36px;
+  height: 36px;
+  margin-left: 10px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
