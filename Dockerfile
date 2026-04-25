@@ -19,7 +19,7 @@ COPY backend/ backend/
 
 # Copy the built frontend files from the frontend builder
 # IMPORTANT: Copy from the path where Vite actually built the files
-COPY --from=frontend-builder /src/backend/App/wwwroot /src/backend/App/wwwroot/
+COPY --from=frontend-builder /src/backend/Server/wwwroot /src/backend/Server/wwwroot/
 
 RUN dotnet publish backend/Server/Server.csproj -c Release -o /Server/publish --no-restore
 
