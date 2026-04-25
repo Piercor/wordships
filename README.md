@@ -74,10 +74,14 @@ ________________________________________
 #### Test plan
 
 The project uses a three-layer testing strategy:
+
 •	Unit tests (xUnit/C#) validate backend game logic in isolation.
+
 •	API tests (Node.js) verify the HTTP endpoints by sending requests to a running server instance.
+
 •	E2E tests (Playwright + Gherkin/BDD) simulate real user interactions in a browser against the full stack.
-CI Pipeline (GitHub Actions)
+
+#### CI Pipeline (GitHub Actions)
 The pipeline triggers on every push and pull request to main and consists of four jobs:
 1.	Security — scans the git history for leaked secrets using Gitleaks.
 2.	Build — builds the backend and frontend, audits dependencies for high/critical vulnerabilities, and validates the Docker image with a Trivy scan.
