@@ -37,6 +37,9 @@ export default function GamePage() {
 
   const [letterWord, setLetterWord] = useState<boolean>(true);
 
+  const [toast, setToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string>("");
+
   useEffect(() => {
     setPlayerGrid(buildGrid(playerWords));
   }, [playerWords]);
@@ -76,6 +79,11 @@ export default function GamePage() {
           ),
         ),
       );
+      setToastMessage("Hit 😁");
+      triggerToast(3000);
+    } else {
+      setToastMessage("Miss 😢");
+      triggerToast(3000);
     }
   };
 
@@ -102,6 +110,8 @@ export default function GamePage() {
           ),
         ),
       );
+      setToastMessage("Hit 😎");
+      triggerToast(3000);
     }
     if (data === "Miss") {
       setPlayerGrid((prev) =>
@@ -118,6 +128,8 @@ export default function GamePage() {
           ),
         ),
       );
+      setToastMessage("Miss 😭 Now one of your letters would be revealed to your opponent!");
+      triggerToast(5000);
     }
   };
 
@@ -149,6 +161,17 @@ export default function GamePage() {
       setWordInputError("Max 6 letters (A-Z) are allowed");
     }
   };
+
+  function triggerToast(time: number) {
+    setToast(true);
+
+    const timer = setTimeout(() => {
+      setToast(false);
+      setToastMessage("");
+    }, time);
+
+    return () => clearTimeout(timer);
+  }
 
   return (
     <main className="game-main">
@@ -273,6 +296,9 @@ export default function GamePage() {
               {opponentWords.length - completedWords} words left
             </span>
           </div>
+        </div>
+        <div className={`toast ${toast ? "toast--visible" : ""}`} data-testid="toast">
+          {toastMessage}
         </div>
       </div>
     </main>
