@@ -169,6 +169,8 @@ export default function GamePage() {
       setToast(false);
       setToastMessage("");
     }, time);
+
+    return () => clearTimeout(timer);
   }
 
   return (
