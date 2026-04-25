@@ -81,12 +81,14 @@ The project uses a three-layer testing strategy:
 
 •	E2E tests (Playwright + Gherkin/BDD) simulate real user interactions in a browser against the full stack.
 
+
 #### CI Pipeline (GitHub Actions)
 The pipeline triggers on every push and pull request to main and consists of four jobs:
 1.	Security — scans the git history for leaked secrets using Gitleaks.
 2.	Build — builds the backend and frontend, audits dependencies for high/critical vulnerabilities, and validates the Docker image with a Trivy scan.
 3.	Tests — runs all three test suites in parallel using a matrix strategy (only after security and build pass).
 4.	Report — always runs last, collects all test artifacts, and posts a summary to the GitHub Actions dashboard.
+
 
 #### Deployment
 Merging to main automatically triggers a deployment to Render via a separate deploy.yml workflow. Render handles the build and startup on its end.
