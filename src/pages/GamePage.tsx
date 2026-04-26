@@ -81,7 +81,11 @@ export default function GamePage() {
       );
       setToastMessage("Hit 😁");
       triggerToast(3000);
-    } else {
+    } else if (data === `Winner: ${player?.id}`) {
+      setToastMessage("Hit 😁");
+      triggerToast(3000);
+    }
+    else {
       setToastMessage("Miss 😢");
       triggerToast(3000);
     }
@@ -112,6 +116,9 @@ export default function GamePage() {
       );
       setToastMessage("Hit 😎");
       triggerToast(3000);
+    } else if (data === `Winner: ${player?.id}`) {
+      setToastMessage("Hit 😎");
+      triggerToast(3000);
     }
     if (data === "Miss") {
       setPlayerGrid((prev) =>
@@ -128,6 +135,10 @@ export default function GamePage() {
           ),
         ),
       );
+      setToastMessage("Miss 😭 Now one of your letters would be revealed to your opponent!");
+      triggerToast(5000);
+    }
+    else if (data === `Winner: ${opponent?.id}`) {
       setToastMessage("Miss 😭 Now one of your letters would be revealed to your opponent!");
       triggerToast(5000);
     }
