@@ -32,8 +32,11 @@ public static class GameEngine
       {
         if (letter.Value == xChar)
         {
-          letter.Found = true;
-          found = true;
+          if (!letter.Found)
+          {
+            letter.Found = true;
+            found = true;
+          }
         }
       }
     }
