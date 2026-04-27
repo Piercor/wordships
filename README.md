@@ -18,7 +18,7 @@ ________________________________________
 
 
 ### Installation
-1.	Clone the repository: git clone https://github.com/Piercor/wordships.git
+1.	Clone the repository: `git clone https://github.com/Piercor/wordships.git`
 2.	`cd wordships`
 3.	`npm run install-all` to install all dependencies (frontend + API test runner)
 4.	`npm start` to start the application (backend + frontend dev server together)
