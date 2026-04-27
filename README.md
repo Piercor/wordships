@@ -93,3 +93,15 @@ The pipeline triggers on every push and pull request to main and consists of fou
 #### Deployment
 Merging to main automatically triggers a deployment to Render via a separate deploy.yml workflow. Render handles the build and startup on its end.
 ________________________________________
+
+### Contributors
+
+[andymalm-ux](https://github.com/andymalm-ux)
+
+[malinkytta](https://github.com/malinkytta)
+
+[piercor](https://github.com/Piercor)
+
+[steff-hub-max](https://github.com/Steff-hub-max)
+
+[theazukanovic](https://github.com/theazukanovic)
